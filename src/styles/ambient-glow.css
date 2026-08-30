@@ -25,3 +25,11 @@
   background: var(--rs-color-background-warning);
   opacity: 0.3;
 }
+
+/* The default placeholder token (--rs-color-foreground-disabled) is only
+   2.43:1 against the card background, below the 4.5:1 minimum for text
+   under 18pt. Use the faded-neutral token instead (7.82:1) — still reads
+   as a hint, not full-strength text. */
+.password-gate-field input::placeholder {
+  color: var(--rs-color-foreground-neutral-faded);
+}

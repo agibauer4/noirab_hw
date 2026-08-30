@@ -47,9 +47,16 @@ export default function PasswordGate({ children }) {
                 <FormControl.Label>Password</FormControl.Label>
                 <TextField
                   name="password"
+                  size="large"
                   placeholder="Enter password"
                   value={value}
-                  inputAttributes={{ type: 'password' }}
+                  className="password-gate-field"
+                  inputAttributes={{
+                    type: 'password',
+                    autoComplete: 'current-password',
+                    autoFocus: true,
+                    'aria-invalid': error,
+                  }}
                   onChange={({ value }) => {
                     setValue(value)
                     setError(false)
@@ -57,7 +64,7 @@ export default function PasswordGate({ children }) {
                 />
                 <FormControl.Error>Incorrect password</FormControl.Error>
               </FormControl>
-              <Button color="primary" type="submit">
+              <Button color="primary" size="large" type="submit">
                 Unlock
               </Button>
             </View>
