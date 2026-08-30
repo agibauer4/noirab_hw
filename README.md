@@ -1,16 +1,15 @@
-# React + Vite
+# noirab_hw
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A password-gated take-home assignment site, built with Vite + React and the
+Reshaped UI library.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `npm run dev` — start the local dev server
+- `npm test` — run the test suite (vitest)
+- `npm run build` — build for production into `dist/`
 
-## React Compiler
+## Deployment
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Pushes to `main` trigger a GitHub Actions workflow that runs the test suite,
+builds the site, and deploys it to GitHub Pages.

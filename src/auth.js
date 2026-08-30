@@ -1,4 +1,5 @@
 export const UNLOCK_STORAGE_KEY = 'noirab_hw_unlocked'
+export const PASSWORD_HASH = 'd26d7e72cf60cac674165bdc0d370c59d2262f305ff1da083470e58e2b7b75eb'
 
 export async function hashPassword(password) {
   const data = new TextEncoder().encode(password)
@@ -15,5 +16,3 @@ export function isUnlocked() {
 export function setUnlocked() {
   sessionStorage.setItem(UNLOCK_STORAGE_KEY, 'true')
 }
-
-export const PASSWORD_HASH = 'd26d7e72cf60cac674165bdc0d370c59d2262f305ff1da083470e58e2b7b75eb'
