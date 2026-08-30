@@ -47,7 +47,6 @@ export default function PasswordGate({ children }) {
                 <FormControl.Label>Password</FormControl.Label>
                 <TextField
                   name="password"
-                  size="large"
                   placeholder="Enter password"
                   value={value}
                   className="password-gate-field"
@@ -64,7 +63,7 @@ export default function PasswordGate({ children }) {
                 />
                 <FormControl.Error>Incorrect password</FormControl.Error>
               </FormControl>
-              <Button color="primary" size="large" type="submit">
+              <Button color="primary" type="submit">
                 Unlock
               </Button>
             </View>
