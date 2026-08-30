@@ -1,0 +1,27 @@
+/* Large blurred backdrop blobs for the password gate. Purely decorative —
+   text always sits on an opaque Card surface, so this can't affect contrast. */
+
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+.ambient-blob-primary {
+  top: -180px;
+  left: -160px;
+  width: 480px;
+  height: 480px;
+  background: var(--rs-color-background-primary);
+  opacity: 0.35;
+}
+
+.ambient-blob-accent {
+  bottom: -200px;
+  right: -160px;
+  width: 420px;
+  height: 420px;
+  background: var(--rs-color-background-warning);
+  opacity: 0.3;
+}
