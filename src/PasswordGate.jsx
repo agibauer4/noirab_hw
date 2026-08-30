@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Button, TextField, View, Text, FormControl, Card } from 'reshaped'
 import { hashPassword, isUnlocked, setUnlocked, PASSWORD_HASH } from './auth.js'
-import logoUrl from './assets/logo.svg'
 
 export default function PasswordGate({ children }) {
   const [unlocked, setUnlockedState] = useState(isUnlocked())
@@ -36,7 +35,6 @@ export default function PasswordGate({ children }) {
       <div className="ambient-blob ambient-blob-primary" aria-hidden="true" />
       <div className="ambient-blob ambient-blob-accent" aria-hidden="true" />
       <View gap={6} align="center" width="340px" position="relative">
-        <img src={logoUrl} width="56" height="56" alt="noirab" />
         <Card padding={8} className="glow-primary">
           <form onSubmit={handleSubmit}>
             <View gap={4}>
