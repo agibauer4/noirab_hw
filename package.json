@@ -4,8 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run build:theme",
     "dev": "vite",
+    "prebuild": "npm run build:theme",
     "build": "vite build",
+    "build:theme": "reshaped theming --config reshaped.config.cjs --output src/themes",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run"
@@ -16,6 +19,7 @@
     "reshaped": "^4.1.0"
   },
   "devDependencies": {
+    "@reshaped/theming": "^4.1.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",

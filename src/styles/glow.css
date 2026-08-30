@@ -1,0 +1,20 @@
+/* Glow accents. Colors track the active Reshaped theme tokens, so they
+   stay in sync if the palette changes. */
+
+.glow-primary {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--rs-color-border-primary) 40%, transparent),
+    0 0 14px color-mix(in oklch, var(--rs-color-background-primary) 28%, transparent);
+}
+
+.glow-accent {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--rs-color-border-warning) 40%, transparent),
+    0 0 14px color-mix(in oklch, var(--rs-color-background-warning) 28%, transparent);
+}
+
+.glow-positive {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--rs-color-border-positive) 40%, transparent),
+    0 0 14px color-mix(in oklch, var(--rs-color-background-positive) 28%, transparent);
+}

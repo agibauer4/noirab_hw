@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Generated Reshaped theme output (run `npm run build:theme`)
+src/themes
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
