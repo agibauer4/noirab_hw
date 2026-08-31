@@ -71,9 +71,7 @@ export default function Justify() {
           all three markets or only where the documents already pass. Thirty people is a
           read on mechanism rather than a rate, and it separates the three failures: never
           scanned the code (copy), scanned and photographed but the desktop never updated
-          (engineering), captured and rejected (the provider). It runs in days, where an
-          A/B on the whole flow needs three weeks at this traffic to see even an
-          eight-point move.
+          (engineering), captured and rejected (the provider).
         </P>
       </Section>
 
