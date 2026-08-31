@@ -65,11 +65,15 @@ export default function Justify() {
           give the weakest markets a second route to the same check.
         </P>
         <P>
-          <strong>The test.</strong> Step 2 alone, desktop, unmoderated, thirty merchants.
-          Not an A/B: at 60 sessions a day that needs three weeks to see eight points,
-          cannot see three at all, and reports that something moved rather than what.
-          Thirty people is not a rate, but it separates never scanned (copy) from scanned
-          and nothing updated (engineering) from captured and rejected (the provider).
+          <strong>The test.</strong> Step 2 on its own, desktop, unmoderated, around
+          thirty merchants recruited across Vesland, Korria and Aldany, each using their
+          own market’s ID. The spread is the point: it shows whether the handoff works in
+          all three markets or only where the documents already pass. Thirty people is a
+          read on mechanism rather than a rate, and it separates the three failures: never
+          scanned the code (copy), scanned and photographed but the desktop never updated
+          (engineering), captured and rejected (the provider). It runs in days, where an
+          A/B on the whole flow needs three weeks at this traffic to see even an
+          eight-point move.
         </P>
       </Section>
 
