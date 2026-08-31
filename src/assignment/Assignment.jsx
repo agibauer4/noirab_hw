@@ -7,7 +7,7 @@ function Masthead() {
     <View gap={6}>
       <View gap={4}>
         <Text variant="caption-1" color="primary" monospace weight="medium">
-          Diagnosis
+          Paylet · KYB onboarding · take-home, part 1 of 4
         </Text>
         <Text variant="featured-1" weight="bold">
           Nobody is quitting because the form is long
