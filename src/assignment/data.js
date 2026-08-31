@@ -199,8 +199,81 @@ export const QUOTES = {
 export const PARTS = [
   { n: '01', title: 'Diagnose', status: 'on this page', active: true },
   { n: '02', title: 'Name the gap', status: 'on this page', active: true },
-  { n: '03', title: 'Redesign', status: 'to come' },
+  { n: '03', title: 'Redesign', status: 'on this page', active: true },
   { n: '04', title: 'Justify', status: 'to come' },
+]
+
+// --- Part 03 ---------------------------------------------------------------
+
+// The redesigned flow. Desktop-first, because desktop is where the funnel is
+// worst (41.5% at the ID step against mobile's 18.4%).
+//
+// Every one of the 8 original fields is accounted for below — `original` marks
+// which brief field each item is, so nothing can be dropped silently.
+//
+// The ordering decision that matters: identity moves from field 7 to step 2.
+// It's the single biggest loss in the funnel, so it runs while motivation is
+// highest instead of after six fields of investment, and OCR on the document
+// pre-fills what it can for the steps after it.
+export const FLOW = [
+  {
+    n: '01',
+    title: 'Account basics',
+    intent: 'Get them in with the two things every merchant knows by heart.',
+    fields: [
+      { label: 'Business / legal name', original: true, note: 'character count' },
+      { label: 'Company type', original: true, note: 'drives later steps' },
+      { label: 'Work email', original: false, note: 'new — enables save & resume' },
+    ],
+  },
+  {
+    n: '02',
+    title: 'Identity check',
+    intent: 'Hardest step, run early. OCR pre-fills what it reads.',
+    fields: [
+      { label: 'Your name (UBO)', original: true, note: 'pre-filled by OCR' },
+      { label: 'ID document', original: true, note: 'phone capture, upload fallback' },
+    ],
+    branch: true,
+  },
+  {
+    n: '03',
+    title: 'Company details',
+    intent: 'Registry data, with market-specific labels and examples.',
+    fields: [
+      { label: 'Tax identification number', original: true, note: 'format hint + example' },
+      { label: 'Company registration number', original: true, note: 'format hint + example' },
+      { label: 'Registered business address', original: true, note: 'partly pre-filled' },
+    ],
+  },
+  {
+    n: '04',
+    title: 'Payout & confirmation',
+    intent: 'Money last, when commitment is highest.',
+    fields: [
+      { label: 'Bank account / payout details', original: true, note: 'IBAN or local, both accepted' },
+      { label: 'Terms acceptance + submit', original: true, note: 'plain-language summary' },
+    ],
+  },
+]
+
+// The step-02 branch. Handoff is the default because desktop drops at 41.5%
+// here; the upload fallback stays, with its cost stated up front rather than
+// discovered later.
+export const KYC_BRANCH = [
+  {
+    label: 'Phone capture',
+    tag: 'default',
+    body: 'QR code on desktop, capture on the phone, desktop updates live. Session is never handed over — the desktop tab stays in control.',
+    outcome: 'Usually verified in minutes',
+    primary: true,
+  },
+  {
+    label: 'Upload a file instead',
+    tag: 'always offered',
+    body: 'For anyone without a phone to hand, or who already has a scan. Never hidden behind the QR.',
+    outcome: 'Approval may take longer — manual review',
+  },
 ]
 
 // --- Part 02 ---------------------------------------------------------------

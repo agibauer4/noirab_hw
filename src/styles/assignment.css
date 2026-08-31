@@ -170,6 +170,160 @@
   }
 }
 
+/* ---- design canvas ---- */
+
+/* The viewport the redesign lives in. It's the product's own page background —
+   the app inside should look like an app, not like a diagram pinned to a board.
+   Content scrolls inside it; the page body never moves sideways. */
+.design-canvas {
+  border: 1px solid var(--rs-color-border-neutral);
+  border-radius: var(--rs-radius-large);
+  background-color: var(--rs-color-background-elevation-base);
+  padding: var(--rs-unit-x8) var(--rs-unit-x6);
+  overflow: auto;
+  min-height: 26rem;
+}
+
+/* Expanded: fills the window as a fixed overlay. It needs an opaque ground of
+   its own, since the page still sits behind it. Kept below Reshaped's own
+   overlay layer so modals and toasts would still land on top. */
+.design-canvas--expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  border: none;
+  border-radius: 0;
+  padding: var(--rs-unit-x6);
+  background-color: var(--rs-color-background-page);
+  overflow: auto;
+}
+
+.design-canvas--expanded:focus {
+  outline: none;
+}
+
+/* ---- prototype ---- */
+
+/* The prototype gets a max width so it reads as an app on a canvas rather than
+   stretching to whatever the canvas happens to be. */
+.proto-frame {
+  max-width: 44rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* The welcome screen is a single decision — start or don't — so it runs
+   narrower and centred rather than filling the form's full measure. */
+.welcome {
+  max-width: 32rem;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* Cards inside a centred column would otherwise shrink to their content. */
+.welcome-box {
+  width: 100%;
+}
+
+/* The phone tip is supporting detail, not a peer of the checklist — a quiet
+   rule and small type keep it subordinate to the thing people act on. */
+.welcome-note {
+  width: 100%;
+  border-left: 2px solid var(--rs-color-border-primary);
+  padding: var(--rs-unit-x1) var(--rs-unit-x3);
+}
+
+.proto-stepper {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--rs-unit-x1);
+}
+
+/* Each step is a button so completed steps are reachable by keyboard, not just
+   clickable. The top border carries the state, which keeps the row scannable
+   without relying on colour alone — the numeral becomes a tick when done. */
+.proto-step {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-top: 2px solid var(--rs-color-border-neutral-faded);
+  padding: var(--rs-unit-x2) var(--rs-unit-x2) var(--rs-unit-x2) 0;
+  cursor: default;
+  color: inherit;
+  font: inherit;
+}
+
+.proto-step--done {
+  border-top-color: var(--rs-color-background-positive);
+  cursor: pointer;
+}
+
+.proto-step--current {
+  border-top-color: var(--rs-color-background-primary);
+}
+
+.proto-step--upcoming {
+  opacity: 0.55;
+}
+
+.proto-step:focus-visible {
+  outline: 2px solid var(--rs-color-background-primary);
+  outline-offset: 2px;
+}
+
+/* Stand-in for the handoff QR code. Deliberately obviously a placeholder — a
+   fake but scannable-looking code would invite someone to try scanning it. */
+.proto-qr {
+  width: 9rem;
+  height: 9rem;
+  border-radius: var(--rs-radius-medium);
+  background-color: var(--rs-color-background-neutral);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      var(--rs-color-foreground-neutral) 0 8px,
+      transparent 8px 16px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      var(--rs-color-foreground-neutral) 0 8px,
+      transparent 8px 16px
+    );
+  background-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+/* Empty state, until the design lands. */
+.canvas-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22rem;
+  text-align: center;
+}
+
+/* Placeholder for copy that lands once the design settles. Dashed, so it reads
+   as deliberately unfinished rather than as an empty card. */
+.concept-slot {
+  border: 1px dashed var(--rs-color-border-neutral);
+  border-radius: var(--rs-radius-medium);
+  padding: var(--rs-unit-x4);
+}
+
+/* One step of the flow. Fixed width so the row reads as a sequence of screens
+   and scrolls rather than reflowing into a column on narrow viewports. */
+.flow-step {
+  width: 15rem;
+  flex: 0 0 auto;
+}
+
+.flow-arrow {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
 .assignment-quote {
   border-left: 2px solid var(--rs-color-border-warning);
   padding-left: var(--rs-unit-x4);
