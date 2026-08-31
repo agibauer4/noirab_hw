@@ -1,0 +1,378 @@
+/* Data-display styles for the assignment write-up. Colors are derived from the
+   active Reshaped theme tokens (same approach as glow.css) so the charts stay
+   in sync if the palette changes. */
+
+/* Sequential loss ramp — ONE hue (the theme's warning orange), stepped by how
+   much of it is mixed into the page background. On a dark page more orange
+   reads as brighter, so magnitude increases monotonically from loss-1 to
+   loss-5. A single-hue ramp is what magnitude data wants; the theme's critical
+   red stays reserved for the "worst step" badge and is never used as a data
+   color, so status and magnitude can't be confused. */
+.assignment {
+  --loss-1: color-mix(in oklch, var(--rs-color-background-warning) 22%, var(--rs-color-background-page));
+  --loss-2: color-mix(in oklch, var(--rs-color-background-warning) 40%, var(--rs-color-background-page));
+  --loss-3: color-mix(in oklch, var(--rs-color-background-warning) 58%, var(--rs-color-background-page));
+  --loss-4: color-mix(in oklch, var(--rs-color-background-warning) 78%, var(--rs-color-background-page));
+  --loss-5: var(--rs-color-background-warning);
+  --data-rule: var(--rs-color-border-neutral-faded);
+}
+
+/* ---- data tables ---- */
+
+/* Wide tables scroll inside their own container so the page body never
+   scrolls sideways on narrow screens. */
+.data-scroll {
+  overflow-x: auto;
+  margin-inline: calc(var(--rs-unit-x4) * -1);
+  padding-inline: var(--rs-unit-x4);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 30rem;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 0 var(--rs-unit-x2) var(--rs-unit-x2) 0;
+  border-bottom: 1px solid var(--rs-color-border-neutral);
+  vertical-align: bottom;
+}
+
+/* A numeric header must sit over its own column edge. `.data-num` alone loses
+   to `.data-table th` on specificity (0-1-0 against 0-1-1), which silently left-
+   aligned every numeric heading while its figures stayed right-aligned. */
+.data-table th.data-num {
+  text-align: right;
+}
+
+.data-table td {
+  padding: var(--rs-unit-x2) var(--rs-unit-x2) var(--rs-unit-x2) 0;
+  border-bottom: 1px solid var(--data-rule);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Digits that stack in columns line up. */
+.data-num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-step {
+  width: 1.5rem;
+  white-space: nowrap;
+}
+
+.data-label {
+  white-space: nowrap;
+}
+
+/* ---- bars ---- */
+
+.data-bar-cell {
+  width: 40%;
+  min-width: 7.5rem;
+}
+
+.data-bar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+}
+
+.data-bar-track {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Rounded only on the free end, so every bar stays anchored to a common
+   baseline and lengths remain visually comparable. */
+.data-bar {
+  display: block;
+  height: 10px;
+  border-radius: 0 var(--rs-radius-small) var(--rs-radius-small) 0;
+}
+
+/* Every bar carries its printed value, so the figure is readable without
+   relying on color — which also covers the low-contrast end of the ramp. */
+.data-bar-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 3.2rem;
+  text-align: right;
+}
+
+/* ---- reading measure ---- */
+
+/* Running text tops out near 65-75 characters; tables and figures are allowed
+   the full column width. */
+.prose-measure {
+  max-width: 68ch;
+}
+
+/* Part-level rule. Deliberately heavier and primary-coloured, where the rules
+   between sections inside a part are the theme's faint neutral Divider — so the
+   document reads as two levels of hierarchy (part > section) rather than one
+   long flat list, once parts 02-04 land. */
+.part-rule {
+  height: 2px;
+  margin: 0;
+  border: none;
+  background: var(--rs-color-background-primary);
+}
+
+/* Part-nav cards that link to their section. The Card keeps its own surface —
+   the anchor only carries the link behaviour, the hit area and the focus ring. */
+.part-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--rs-radius-large);
+  transition: transform 120ms ease;
+}
+
+.part-link:hover {
+  transform: translateY(-2px);
+}
+
+/* Keyboard users need to see where they are; the Card's own surface gives no
+   focus affordance because the anchor, not the Card, takes focus. */
+.part-link:focus-visible {
+  outline: 2px solid var(--rs-color-background-primary);
+  outline-offset: 3px;
+}
+
+/* Landing flush against the viewport edge reads as a broken jump. */
+.part-heading {
+  scroll-margin-top: var(--rs-unit-x6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .part-link {
+    transition: none;
+  }
+
+  .part-link:hover {
+    transform: none;
+  }
+}
+
+/* ---- design canvas ---- */
+
+/* The viewport the redesign lives in. It's the product's own page background —
+   the app inside should look like an app, not like a diagram pinned to a board.
+   Content scrolls inside it; the page body never moves sideways. */
+.design-canvas {
+  border: 1px solid var(--rs-color-border-neutral);
+  border-radius: var(--rs-radius-large);
+  background-color: var(--rs-color-background-elevation-base);
+  padding: var(--rs-unit-x8) var(--rs-unit-x6);
+  overflow: auto;
+  min-height: 26rem;
+}
+
+/* Expanded: fills the window as a fixed overlay. It needs an opaque ground of
+   its own, since the page still sits behind it. Kept below Reshaped's own
+   overlay layer so modals and toasts would still land on top. */
+.design-canvas--expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  border: none;
+  border-radius: 0;
+  padding: var(--rs-unit-x6);
+  background-color: var(--rs-color-background-page);
+  overflow: auto;
+}
+
+.design-canvas--expanded:focus {
+  outline: none;
+}
+
+/* When the native Fullscreen API also engages, the element is its own top-layer
+   box — it must restate its ground, since the default fullscreen backdrop is
+   black and would show through. Reshaped's --rs-* custom properties still
+   inherit, because fullscreen doesn't reparent the node. */
+.design-canvas:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  border: none;
+  border-radius: 0;
+  padding: var(--rs-unit-x6);
+  background-color: var(--rs-color-background-page);
+  overflow: auto;
+}
+
+/* ---- prototype ---- */
+
+/* The prototype gets a max width so it reads as an app on a canvas rather than
+   stretching to whatever the canvas happens to be. */
+.proto-frame {
+  max-width: 44rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* The welcome screen is a single decision — start or don't — so it runs
+   narrower and centred rather than filling the form's full measure. */
+.welcome {
+  max-width: 32rem;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* Cards inside a centred column would otherwise shrink to their content. */
+.welcome-box {
+  width: 100%;
+}
+
+/* The phone tip is supporting detail, not a peer of the checklist — a quiet
+   rule and small type keep it subordinate to the thing people act on. */
+.welcome-note {
+  width: 100%;
+  border-left: 2px solid var(--rs-color-border-primary);
+  padding: var(--rs-unit-x1) var(--rs-unit-x3);
+}
+
+.proto-stepper {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--rs-unit-x1);
+}
+
+/* Each step is a button so completed steps are reachable by keyboard, not just
+   clickable. The top border carries the state, which keeps the row scannable
+   without relying on colour alone — the numeral becomes a tick when done. */
+.proto-step {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-top: 2px solid var(--rs-color-border-neutral-faded);
+  padding: var(--rs-unit-x2) var(--rs-unit-x2) var(--rs-unit-x2) 0;
+  cursor: default;
+  color: inherit;
+  font: inherit;
+}
+
+.proto-step--done {
+  border-top-color: var(--rs-color-background-positive);
+  cursor: pointer;
+}
+
+.proto-step--current {
+  border-top-color: var(--rs-color-background-primary);
+}
+
+.proto-step--upcoming {
+  opacity: 0.55;
+}
+
+.proto-step:focus-visible {
+  outline: 2px solid var(--rs-color-background-primary);
+  outline-offset: 2px;
+}
+
+/* Empty state, until the design lands. */
+.canvas-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22rem;
+  text-align: center;
+}
+
+/* One step of the flow. Fixed width so the row reads as a sequence of screens
+   and scrolls rather than reflowing into a column on narrow viewports. */
+.flow-step {
+  width: 15rem;
+  flex: 0 0 auto;
+}
+
+.flow-arrow {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.assignment-quote {
+  border-left: 2px solid var(--rs-color-border-warning);
+  padding-left: var(--rs-unit-x4);
+}
+
+@media print {
+  .data-scroll {
+    overflow-x: visible;
+  }
+}
+
+/* ---- success mark ---- */
+
+/* A soft halo behind the mark, tinted to match its tone. color-mix keeps it
+   tracking the theme tokens rather than hard-coding a green. */
+.status-mark {
+  display: grid;
+  place-items: center;
+  padding: var(--rs-unit-x2);
+  border-radius: 50%;
+}
+
+.status-mark--positive {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--rs-color-background-positive) 22%, transparent) 0%,
+    transparent 68%
+  );
+}
+
+.status-mark--warning {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--rs-color-background-warning) 22%, transparent) 0%,
+    transparent 68%
+  );
+}
+
+/* The ring starts at the top rather than at 3 o'clock, so it reads as drawing
+   itself the way a person would. */
+.status-mark-ring {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  animation: status-mark-draw 560ms ease-out forwards;
+}
+
+.status-mark-glyph {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: status-mark-draw 380ms ease-out 420ms forwards;
+}
+
+@keyframes status-mark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Motion is the flourish, not the message — the mark still resolves fully. */
+@media (prefers-reduced-motion: reduce) {
+  .status-mark-ring,
+  .status-mark-glyph {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
