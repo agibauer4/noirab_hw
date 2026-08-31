@@ -10,19 +10,19 @@ import { View, Text, Card, Button } from 'reshaped'
 const CHECKLIST = [
   {
     title: 'Your business details',
-    detail: 'Registered name and business type.',
+    detail: 'The registered name and business type, as they appear on your registration documents.',
   },
   {
     title: 'Photo ID',
-    detail: 'Passport, national ID card or driving licence.',
+    detail: 'A passport, national ID card or driving licence — for whoever owns the business.',
   },
   {
     title: 'Your registration numbers',
-    detail: 'Tax number and company registration number.',
+    detail: 'Your tax number and company registration number. Both are on your registration paperwork.',
   },
   {
     title: 'Bank account details',
-    detail: 'Where your takings get paid.',
+    detail: 'The account you want your takings paid into.',
   },
 ]
 
@@ -42,26 +42,26 @@ export default function Welcome({ onStart }) {
       </View>
 
       <div className="welcome-box">
-        <Card padding={4}>
-          <View gap={3}>
+        <Card padding={5}>
+          <View gap={4}>
             <Text variant="body-3" weight="semibold">
               What you'll need
             </Text>
-            <View gap={2}>
-              {CHECKLIST.map((item) => (
-                <View key={item.title} gap={2} direction="row" align="start" wrap={false}>
-                  <Text variant="caption-1" color="primary">
-                    —
+            <View gap={4}>
+              {CHECKLIST.map((item, index) => (
+                <View key={item.title} gap={3} direction="row" align="start" wrap={false}>
+                  <Text variant="caption-1" color="primary" monospace weight="medium">
+                    {String(index + 1).padStart(2, '0')}
                   </Text>
                   <View.Item grow>
-                    <Text variant="caption-1">
-                      <Text as="span" variant="caption-1" weight="medium">
+                    <View gap={1}>
+                      <Text variant="body-3" weight="medium">
                         {item.title}
-                      </Text>{' '}
-                      <Text as="span" variant="caption-1" color="neutral-faded">
+                      </Text>
+                      <Text variant="caption-1" color="neutral-faded">
                         {item.detail}
                       </Text>
-                    </Text>
+                    </View>
                   </View.Item>
                 </View>
               ))}

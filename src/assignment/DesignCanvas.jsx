@@ -1,27 +1,64 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text, Button } from 'reshaped'
 
 /**
  * The container the redesign lives in. It's a viewport, not a figure: the
  * design inside is meant to be looked at at real size, so the canvas expands to
- * fill the window.
+ * fill the screen.
  *
- * This expands via CSS rather than the Fullscreen API. requestFullscreen needs
- * a user gesture, is refused outright in some embedded contexts, and in at
- * least one it returns a promise that never settles — which leaves a button
- * that looks alive and does nothing. A fixed overlay behaves identically in
- * every browser, and lets us own the Escape key and focus handling.
+ * Two mechanisms, deliberately layered:
+ *
+ *   1. A fixed overlay, applied immediately. This always works, owns Escape and
+ *      focus handling, and guarantees a full-viewport canvas.
+ *   2. The Fullscreen API on top, fired and forgotten. Where it works it also
+ *      hides the browser's own chrome, which the overlay can't do.
+ *
+ * The native call is never awaited. It needs a user gesture, is refused in some
+ * embedded contexts, and in at least one returns a promise that never settles —
+ * awaiting it would hang the interaction. Since the overlay has already done
+ * the important part, a silent failure costs nothing.
  */
 export default function DesignCanvas({ label, children }) {
   const [expanded, setExpanded] = useState(false)
   const frameRef = useRef(null)
   const triggerRef = useRef(null)
+  // Tracks whether *we* put the document into native fullscreen, so an
+  // unrelated fullscreenchange can't collapse the overlay.
+  const nativeActiveRef = useRef(false)
+
+  const collapse = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {})
+    }
+    nativeActiveRef.current = false
+    setExpanded(false)
+  }, [])
+
+  const expand = useCallback(() => {
+    setExpanded(true)
+    frameRef.current?.requestFullscreen?.().catch(() => {})
+  }, [])
+
+  // Leaving native fullscreen by any route — Escape, the browser's own control,
+  // a window change — collapses the overlay too, so the two can't disagree.
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (document.fullscreenElement === frameRef.current) {
+        nativeActiveRef.current = true
+      } else if (nativeActiveRef.current) {
+        nativeActiveRef.current = false
+        setExpanded(false)
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
+  }, [])
 
   useEffect(() => {
     if (!expanded) return undefined
 
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') setExpanded(false)
+      if (event.key === 'Escape') collapse()
     }
     document.addEventListener('keydown', onKeyDown)
 
@@ -29,12 +66,12 @@ export default function DesignCanvas({ label, children }) {
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
-    // Captured now: by cleanup time the ref may already point elsewhere.
-    const trigger = triggerRef.current
-
     // Move focus in, so Escape and the close button are reachable by keyboard
     // and a screen reader lands inside the panel rather than behind it.
     frameRef.current?.focus()
+
+    // Captured now: by cleanup time the ref may already point elsewhere.
+    const trigger = triggerRef.current
 
     return () => {
       document.removeEventListener('keydown', onKeyDown)
@@ -42,7 +79,7 @@ export default function DesignCanvas({ label, children }) {
       // Send focus back where it came from, not to the top of the document.
       trigger?.querySelector('button')?.focus()
     }
-  }, [expanded])
+  }, [expanded, collapse])
 
   return (
     <View gap={2}>
@@ -53,7 +90,7 @@ export default function DesignCanvas({ label, children }) {
           </Text>
         </View.Item>
         <div ref={triggerRef}>
-          <Button size="small" variant="outline" onClick={() => setExpanded(true)}>
+          <Button size="small" variant="outline" onClick={expand}>
             View full screen
           </Button>
         </div>
@@ -74,7 +111,7 @@ export default function DesignCanvas({ label, children }) {
                 {label} — press Esc to exit
               </Text>
             </View.Item>
-            <Button size="small" variant="outline" onClick={() => setExpanded(false)}>
+            <Button size="small" variant="outline" onClick={collapse}>
               Exit full screen
             </Button>
           </View>

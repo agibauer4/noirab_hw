@@ -27,8 +27,9 @@ export const MARKETS = {
     cityPlaceholder: 'Vesburg',
     bankLocalLabel: 'Vesland account number',
     bankLocalPlaceholder: '12 34 56 789',
+    bankIbanPlaceholder: 'VE91 PYLT 0417 1643 00',
     // What the ID scan returns. Pre-filled into the form, never locked.
-    ocr: { name: 'Anna Bauer', street: 'Handelsstraat 12', postcode: '1234 AB', city: 'Vesburg' },
+    ocr: { name: 'Elin Vos', street: 'Handelsstraat 12', postcode: '1234 AB', city: 'Vesburg' },
   },
   korria: {
     label: 'Korria',
@@ -51,7 +52,8 @@ export const MARKETS = {
     cityPlaceholder: 'Korria City',
     bankLocalLabel: 'Korria account number',
     bankLocalPlaceholder: '00-11-22 33445566',
-    ocr: { name: 'Anna Bauer', street: '14 Market Row', postcode: 'K1 4RW', city: 'Korria City' },
+    bankIbanPlaceholder: 'KR29 PYLT 0011 2233 4455',
+    ocr: { name: 'Rowan Vale', street: '14 Market Row', postcode: 'K1 4RW', city: 'Korria City' },
   },
   aldany: {
     label: 'Aldany',
@@ -74,7 +76,8 @@ export const MARKETS = {
     cityPlaceholder: 'Aldano',
     bankLocalLabel: 'Aldany account number',
     bankLocalPlaceholder: 'X0300203280000400162854',
-    ocr: { name: 'Anna Bauer', street: 'Via Mercato 8', postcode: '00184', city: 'Aldano' },
+    bankIbanPlaceholder: 'AL47 PYLT 0060 0000 0000',
+    ocr: { name: 'Nadia Ferri', street: 'Via Mercato 8', postcode: '00184', city: 'Aldano' },
   },
 }
 
@@ -92,3 +95,13 @@ export const STEPS = [
 ]
 
 export const NAME_MAX = 120
+
+// Field labels get reused mid-sentence in validation messages. Lowercasing the
+// whole string turns "VAT number" into "vat number" and "(TIN)" into "(tin)",
+// so only the first character is lowered — and not even that when the first
+// word is an acronym.
+export function inSentence(label) {
+  const [firstWord] = label.split(' ')
+  if (firstWord.length > 1 && firstWord === firstWord.toUpperCase()) return label
+  return label.charAt(0).toLowerCase() + label.slice(1)
+}

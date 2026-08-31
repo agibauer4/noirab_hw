@@ -202,6 +202,20 @@
   outline: none;
 }
 
+/* When the native Fullscreen API also engages, the element is its own top-layer
+   box — it must restate its ground, since the default fullscreen backdrop is
+   black and would show through. Reshaped's --rs-* custom properties still
+   inherit, because fullscreen doesn't reparent the node. */
+.design-canvas:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  border: none;
+  border-radius: 0;
+  padding: var(--rs-unit-x6);
+  background-color: var(--rs-color-background-page);
+  overflow: auto;
+}
+
 /* ---- prototype ---- */
 
 /* The prototype gets a max width so it reads as an app on a canvas rather than
@@ -273,28 +287,6 @@
   outline-offset: 2px;
 }
 
-/* Stand-in for the handoff QR code. Deliberately obviously a placeholder — a
-   fake but scannable-looking code would invite someone to try scanning it. */
-.proto-qr {
-  width: 9rem;
-  height: 9rem;
-  border-radius: var(--rs-radius-medium);
-  background-color: var(--rs-color-background-neutral);
-  background-image:
-    repeating-linear-gradient(
-      90deg,
-      var(--rs-color-foreground-neutral) 0 8px,
-      transparent 8px 16px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      var(--rs-color-foreground-neutral) 0 8px,
-      transparent 8px 16px
-    );
-  background-blend-mode: multiply;
-  opacity: 0.5;
-}
-
 /* Empty state, until the design lands. */
 .canvas-empty {
   display: flex;
@@ -332,5 +324,63 @@
 @media print {
   .data-scroll {
     overflow-x: visible;
+  }
+}
+
+/* ---- success mark ---- */
+
+/* A soft halo behind the mark, tinted to match its tone. color-mix keeps it
+   tracking the theme tokens rather than hard-coding a green. */
+.status-mark {
+  display: grid;
+  place-items: center;
+  padding: var(--rs-unit-x2);
+  border-radius: 50%;
+}
+
+.status-mark--positive {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--rs-color-background-positive) 22%, transparent) 0%,
+    transparent 68%
+  );
+}
+
+.status-mark--warning {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--rs-color-background-warning) 22%, transparent) 0%,
+    transparent 68%
+  );
+}
+
+/* The ring starts at the top rather than at 3 o'clock, so it reads as drawing
+   itself the way a person would. */
+.status-mark-ring {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  animation: status-mark-draw 560ms ease-out forwards;
+}
+
+.status-mark-glyph {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: status-mark-draw 380ms ease-out 420ms forwards;
+}
+
+@keyframes status-mark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Motion is the flourish, not the message — the mark still resolves fully. */
+@media (prefers-reduced-motion: reduce) {
+  .status-mark-ring,
+  .status-mark-glyph {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 }

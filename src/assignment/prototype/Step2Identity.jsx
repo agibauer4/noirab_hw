@@ -12,6 +12,7 @@ import {
   Divider,
 } from 'reshaped'
 import { MARKETS } from './registry.js'
+import FakeQr from './FakeQr.jsx'
 
 // Step 2 is the whole diagnosis in one screen.
 //
@@ -22,6 +23,12 @@ import { MARKETS } from './registry.js'
 // default path on desktop, because desktop drops at 41.5% here against mobile's
 // 18.4% — while keeping the file upload visible, with its cost stated up front
 // instead of discovered later.
+const HANDOFF_STEPS = [
+  'Scan the QR code with your phone camera.',
+  'Your phone walks you through photographing your ID.',
+  'You come straight back here — this page updates on its own, with everything you have already filled in still there.',
+]
+
 export default function Step2Identity({ values, set, setMany, capture, setCapture }) {
   const isSoleTrader = values.companyType === 'sole-trader'
   const timerRef = useRef(null)
@@ -77,22 +84,19 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
         <Text variant="featured-3" weight="bold">
           Now we need to check who you are
         </Text>
-        {/* CONDITIONAL — a sole trader is the business, so the generic
+        {/* The reason and the reassurance are one thought, not two — a separate
+            "why this is needed" panel just restated the sentence above it.
+            CONDITIONAL: a sole trader is the business, so the generic
             "beneficial owner" wording reads as a duplicate question. Sole
             traders drop at 42.8% here, the worst of any company type. */}
         <Text variant="body-3" color="neutral-faded">
           {isSoleTrader
-            ? 'You registered as a sole trader, so you and your business are the same in law. We have to confirm your identity before you can take payments.'
-            : 'Payment regulators require us to confirm the identity of the person who owns or controls the business. That means one real person, even though you are registering a company.'}
+            ? 'You registered as a sole trader, so you and your business are the same in law — we need to confirm it is you before you can take payments. '
+            : 'Regulators require us to confirm the identity of the person who owns or controls the business — one real person, even though you are registering a company. '}
+          We check the document and then delete the image. It is never shown to anyone you
+          sell to.
         </Text>
       </View>
-
-      <Alert color="primary" title="Why this is needed">
-        <Text variant="caption-1">
-          It is a legal requirement for anyone handling payments. We check the document,
-          then delete the image. It is never shown to anyone you sell to.
-        </Text>
-      </Alert>
 
       {/* ORIGINAL FIELD 6a — UBO name. Pre-filled by OCR when the document is
           read, so the merchant doesn't type what we just scanned. */}
@@ -129,7 +133,7 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
         </Text>
 
         {capture.status === 'idle' && (
-          <View gap={3}>
+          <View gap={4}>
             <Card padding={4} className="glow-primary">
               <View gap={3}>
                 <View direction="row" gap={2} align="center">
@@ -140,42 +144,56 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
                     fastest
                   </Badge>
                 </View>
-                <Text variant="caption-1" color="neutral-faded">
-                  We'll show a QR code. Photograph your ID with your phone and this page
-                  updates by itself — you won't lose your place, and you don't need to find
-                  a scan.
-                </Text>
+
+                {/* Spelling out the sequence is what makes an unfamiliar
+                    device handoff feel safe. The thing people fear is being
+                    dumped on their phone and losing the form they've filled
+                    in, so the third line answers that before they commit. */}
+                <View gap={2}>
+                  {HANDOFF_STEPS.map((line, index) => (
+                    <View key={line} direction="row" gap={2} align="start" wrap={false}>
+                      <Text variant="caption-2" color="primary" monospace weight="medium">
+                        {index + 1}
+                      </Text>
+                      <View.Item grow>
+                        <Text variant="caption-1" color="neutral-faded">
+                          {line}
+                        </Text>
+                      </View.Item>
+                    </View>
+                  ))}
+                </View>
+
                 <Text variant="caption-2" color="positive" monospace>
                   Usually approved within minutes
                 </Text>
                 <View direction="row">
                   <Button color="primary" onClick={startHandoff}>
-                    Continue on my phone
+                    Show me the QR code
                   </Button>
                 </View>
               </View>
             </Card>
 
-            {/* The fallback is never hidden — someone without a phone to hand
-                must not be stuck. Its cost is stated here, not after. */}
-            <Card padding={4}>
-              <View gap={3}>
-                <Text variant="body-3" weight="semibold">
-                  Upload a file instead
-                </Text>
+            {/* Demoted to a quiet line rather than a matching card — the phone
+                path is faster and the one we want people to take. But it stays
+                visible instead of hiding behind a disclosure: anyone without a
+                phone to hand would otherwise reach a dead end, and its cost is
+                stated here rather than discovered after uploading. */}
+            <View gap={1}>
+              <View direction="row" gap={2} align="center" wrap>
                 <Text variant="caption-1" color="neutral-faded">
-                  If you already have a photo or scan saved. JPG, PNG or PDF, up to 10 MB.
+                  No phone to hand?
                 </Text>
-                <Text variant="caption-2" color="warning" monospace>
-                  Checked by a person — approval can take up to 1 working day
-                </Text>
-                <View direction="row">
-                  <Button variant="outline" onClick={startUpload}>
-                    Choose a file
-                  </Button>
-                </View>
+                <Button variant="ghost" size="small" onClick={startUpload}>
+                  Upload a file instead
+                </Button>
               </View>
-            </Card>
+              <Text variant="caption-2" color="neutral-faded">
+                JPG, PNG or PDF, up to 10 MB. A person checks uploaded files, so approval
+                can take up to 1 working day.
+              </Text>
+            </View>
           </View>
         )}
 
@@ -183,7 +201,7 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
         {capture.status === 'waiting' && (
           <Card padding={5}>
             <View gap={4} align="center">
-              <div className="proto-qr" aria-hidden="true" />
+              <FakeQr />
               <View gap={1} align="center">
                 <Text variant="body-3" weight="semibold">
                   Scan this with your phone camera
@@ -239,12 +257,15 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
                 We couldn't read this automatically, so someone will check it. You can
                 finish the rest now; approval may take up to 1 working day.
               </Text>
+              {/* "Start over" read as though it would discard the whole
+                  registration. Both actions now name exactly what they replace:
+                  the document, not the application. */}
               <View direction="row" gap={2}>
                 <Button size="small" variant="outline" onClick={startHandoff}>
                   Use my phone instead — faster
                 </Button>
-                <Button size="small" variant="ghost" onClick={reset}>
-                  Start over
+                <Button size="small" variant="ghost" onClick={startUpload}>
+                  Upload a different file
                 </Button>
               </View>
             </View>

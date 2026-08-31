@@ -3,11 +3,12 @@ import { View, Text, Button, Card, Badge, Divider, Alert } from 'reshaped'
 import Stepper from './Stepper.jsx'
 import Welcome from './Welcome.jsx'
 import PayletLogo from './PayletLogo.jsx'
+import StatusMark from './StatusMark.jsx'
 import Step1Business from './Step1Business.jsx'
 import Step2Identity from './Step2Identity.jsx'
 import Step3Registration from './Step3Registration.jsx'
 import Step4Payout from './Step4Payout.jsx'
-import { MARKETS, STEPS } from './registry.js'
+import { MARKETS, STEPS, inSentence } from './registry.js'
 
 const INITIAL_VALUES = {
   businessName: '',
@@ -51,13 +52,13 @@ function validate(step, values, capture) {
 
   if (step === 3) {
     if (!values.taxId.trim()) {
-      errors.taxId = `Enter your ${market.taxId.label.toLowerCase()}. ${market.taxId.hint}`
+      errors.taxId = `Enter your ${inSentence(market.taxId.label)}. ${market.taxId.hint}`
     }
     // The most common real mistake: the merchant enters the other number. The
     // error names what they probably typed and shows the right shape.
     if (!values.noRegNumber) {
       if (!values.regNumber.trim()) {
-        errors.regNumber = `Enter your ${market.regNumber.label.toLowerCase()}, or tick the box if you don't have one.`
+        errors.regNumber = `Enter your ${inSentence(market.regNumber.label)}, or tick the box if you don't have one.`
       } else if (values.regNumber.trim() === values.taxId.trim()) {
         errors.regNumber = market.regNumber.wrongEntry.message
       }
@@ -82,6 +83,7 @@ export default function OnboardingPrototype() {
   const [capture, setCapture] = useState({ mode: null, status: 'idle', progress: 0 })
   const [savedAt, setSavedAt] = useState(null)
   const [submitted, setSubmitted] = useState(false)
+  const [showedDashboardNote, setShowedDashboardNote] = useState(false)
 
   const set = (key, value) => {
     setValues((previous) => ({ ...previous, [key]: value }))
@@ -109,31 +111,69 @@ export default function OnboardingPrototype() {
   }
 
   if (submitted) {
+    // The two endings aren't the same. A verified ID means the account is open;
+    // an uploaded one is still with a reviewer, so the copy can't promise
+    // payments yet and the CTA can't send them somewhere they can't act.
+    const pending = capture.status === 'review'
+
     return (
-      <Card padding={6}>
-        <View gap={4} align="center">
-          <Text variant="featured-3" weight="bold" align="center">
-            That's everything — thank you
-          </Text>
-          <Text variant="body-3" color="neutral-faded" align="center">
-            {capture.status === 'review'
-              ? "We're checking your ID now. You'll get an email within 1 working day."
-              : "Your account is being set up. You'll get an email within a few minutes."}
-          </Text>
+      <View gap={5} className="proto-frame">
+        <View direction="row" gap={3} align="center">
+          <PayletLogo />
+        </View>
+
+        <Card padding={{ s: 5, m: 8 }}>
+          <View gap={5} align="center">
+            <StatusMark tone={pending ? 'warning' : 'positive'} />
+            <View gap={2} align="center">
+              <Text variant="featured-2" weight="bold" align="center">
+                {pending ? "You're all set — we're checking your ID" : "You're all set"}
+              </Text>
+              <Text variant="body-3" color="neutral-faded" align="center">
+                {pending
+                  ? "Everything else is done. Someone is reviewing your ID now — we'll email you within 1 working day, and you can take payments as soon as it clears."
+                  : "Your account is open and you can start taking payments straight away. We've emailed you a confirmation."}
+              </Text>
+            </View>
+            {/* Needs a real handler: Reshaped renders Button as a <span> when
+                it has neither onClick nor href, which leaves the screen's
+                primary control unfocusable and dead to the keyboard. */}
+            <View gap={2} align="center">
+              <Button
+                color="primary"
+                size="large"
+                onClick={() => setShowedDashboardNote(true)}
+              >
+                {pending ? 'Go to my dashboard' : 'Start taking payments'}
+              </Button>
+              {showedDashboardNote && (
+                <Text variant="caption-1" color="neutral-faded" align="center">
+                  The merchant dashboard would open here — beyond the scope of this flow.
+                </Text>
+              )}
+            </View>
+          </View>
+        </Card>
+
+        {/* Prototype control, not product chrome — kept outside the card and
+            named for what it is, so it can't be mistaken for a real CTA. */}
+        <View direction="row" justify="center">
           <Button
-            variant="outline"
+            variant="ghost"
+            size="small"
             onClick={() => {
               setSubmitted(false)
+              setShowedDashboardNote(false)
               setStep(0)
               setValues(INITIAL_VALUES)
               setCapture({ mode: null, status: 'idle', progress: 0 })
               setSavedAt(null)
             }}
           >
-            Run through it again
+            Replay this prototype
           </Button>
         </View>
-      </Card>
+      </View>
     )
   }
 

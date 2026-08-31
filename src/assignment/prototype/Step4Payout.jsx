@@ -49,20 +49,22 @@ export default function Step4Payout({ values, set, errors, capture, onEdit }) {
       </FormControl>
 
       <FormControl hasError={Boolean(errors.accountNumber)}>
-        <FormControl.Label>Account number or IBAN</FormControl.Label>
+        <FormControl.Label>Bank account number or IBAN</FormControl.Label>
         <TextField
           name="accountNumber"
           value={values.accountNumber}
           onChange={({ value }) => set('accountNumber', value)}
-          placeholder={market.bankLocalPlaceholder}
+          placeholder={market.bankIbanPlaceholder}
           hasError={Boolean(errors.accountNumber)}
         />
         {errors.accountNumber ? (
           <FormControl.Error>{errors.accountNumber}</FormControl.Error>
         ) : (
+          // Not lowercased — the label opens with the market's name, and
+          // "your vesland account number" reads as a typo.
           <FormControl.Helper>
-            Either works — your {market.bankLocalLabel.toLowerCase()} or an IBAN. Spaces and
-            dashes are fine.
+            Either works — an IBAN, or your {market.bankLocalLabel} (
+            {market.bankLocalPlaceholder}). Spaces and dashes are fine.
           </FormControl.Helper>
         )}
       </FormControl>
