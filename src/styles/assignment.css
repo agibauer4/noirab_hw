@@ -1,0 +1,121 @@
+/* Data-display styles for the assignment write-up. Colors are derived from the
+   active Reshaped theme tokens (same approach as glow.css) so the charts stay
+   in sync if the palette changes. */
+
+/* Sequential loss ramp — ONE hue (the theme's warning orange), stepped by how
+   much of it is mixed into the page background. On a dark page more orange
+   reads as brighter, so magnitude increases monotonically from loss-1 to
+   loss-5. A single-hue ramp is what magnitude data wants; the theme's critical
+   red stays reserved for the "worst step" badge and is never used as a data
+   color, so status and magnitude can't be confused. */
+.assignment {
+  --loss-1: color-mix(in oklch, var(--rs-color-background-warning) 22%, var(--rs-color-background-page));
+  --loss-2: color-mix(in oklch, var(--rs-color-background-warning) 40%, var(--rs-color-background-page));
+  --loss-3: color-mix(in oklch, var(--rs-color-background-warning) 58%, var(--rs-color-background-page));
+  --loss-4: color-mix(in oklch, var(--rs-color-background-warning) 78%, var(--rs-color-background-page));
+  --loss-5: var(--rs-color-background-warning);
+  --data-rule: var(--rs-color-border-neutral-faded);
+}
+
+/* ---- data tables ---- */
+
+/* Wide tables scroll inside their own container so the page body never
+   scrolls sideways on narrow screens. */
+.data-scroll {
+  overflow-x: auto;
+  margin-inline: calc(var(--rs-unit-x4) * -1);
+  padding-inline: var(--rs-unit-x4);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 30rem;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 0 var(--rs-unit-x2) var(--rs-unit-x2) 0;
+  border-bottom: 1px solid var(--rs-color-border-neutral);
+  vertical-align: bottom;
+}
+
+.data-table td {
+  padding: var(--rs-unit-x2) var(--rs-unit-x2) var(--rs-unit-x2) 0;
+  border-bottom: 1px solid var(--data-rule);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Digits that stack in columns line up. */
+.data-num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-step {
+  width: 1.5rem;
+  white-space: nowrap;
+}
+
+.data-label {
+  white-space: nowrap;
+}
+
+/* ---- bars ---- */
+
+.data-bar-cell {
+  width: 40%;
+  min-width: 7.5rem;
+}
+
+.data-bar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+}
+
+.data-bar-track {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Rounded only on the free end, so every bar stays anchored to a common
+   baseline and lengths remain visually comparable. */
+.data-bar {
+  display: block;
+  height: 10px;
+  border-radius: 0 var(--rs-radius-small) var(--rs-radius-small) 0;
+}
+
+/* Every bar carries its printed value, so the figure is readable without
+   relying on color — which also covers the low-contrast end of the ramp. */
+.data-bar-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 3.2rem;
+  text-align: right;
+}
+
+/* ---- reading measure ---- */
+
+/* Running text tops out near 65-75 characters; tables and figures are allowed
+   the full column width. */
+.prose-measure {
+  max-width: 68ch;
+}
+
+.assignment-quote {
+  border-left: 2px solid var(--rs-color-border-warning);
+  padding-left: var(--rs-unit-x4);
+}
+
+@media print {
+  .data-scroll {
+    overflow-x: visible;
+  }
+}
