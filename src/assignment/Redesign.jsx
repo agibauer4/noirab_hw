@@ -15,7 +15,7 @@ export default function Redesign() {
         </P>
       </Section>
 
-      <DesignCanvas label="Redesigned onboarding — desktop · click through it">
+      <DesignCanvas label="Redesigned onboarding · desktop · click through it">
         <OnboardingPrototype />
       </DesignCanvas>
     </View>

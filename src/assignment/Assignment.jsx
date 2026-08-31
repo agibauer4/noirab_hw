@@ -28,10 +28,10 @@ function Masthead() {
           {
             label: 'Tools',
             value:
-              'Python (csv + collections) — every figure quoted\n' +
-              'Claude Code — the analysis, and building this page\n' +
-              'Reshaped — design system\n' +
-              'GitHub — source and deployment',
+              'Python (csv + collections): every figure quoted\n' +
+              'Claude Code: the analysis, and building this page\n' +
+              'Reshaped: design system\n' +
+              'GitHub: source and deployment',
           },
         ].map((item) => (
           <View key={item.label} gap={1}>

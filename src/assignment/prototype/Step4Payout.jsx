@@ -63,7 +63,7 @@ export default function Step4Payout({ values, set, errors, capture, onEdit }) {
           // Not lowercased — the label opens with the market's name, and
           // "your vesland account number" reads as a typo.
           <FormControl.Helper>
-            Either works — an IBAN, or your {market.bankLocalLabel} (
+            Either works: an IBAN, or your {market.bankLocalLabel} (
             {market.bankLocalPlaceholder}). Spaces and dashes are fine.
           </FormControl.Helper>
         )}
@@ -131,7 +131,7 @@ export default function Step4Payout({ values, set, errors, capture, onEdit }) {
         <Alert color="warning" title="Your ID is still being checked">
           <Text variant="caption-1">
             You can submit now. Because your ID was uploaded rather than photographed, a
-            person has to review it — approval may take up to 1 working day.
+            person has to review it, so approval may take up to 1 working day.
           </Text>
         </Alert>
       )}

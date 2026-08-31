@@ -39,7 +39,7 @@ export default function Diagnosis() {
       <Section rail="Summary" title="Five findings" rule={false}>
         <P>
           {TOPLINE.sessionRate} of sessions complete. The loss isn't spread across a long
-          form — six of the nine steps drop under 10%, and three specific points do the
+          form. Six of the nine steps drop under 10%, and three specific points do the
           damage.
         </P>
         <Bullets
@@ -52,7 +52,7 @@ export default function Diagnosis() {
             <>
               <strong>Vesland loses merchants on the two registry-number fields.</strong>{' '}
               30.3% against roughly 13% in the other markets, and it survives a company-type
-              control. Not a language barrier — Vesland is at parity across the rest of the
+              control. Not a language barrier: Vesland is at parity across the rest of the
               form.
             </>,
             <>
@@ -61,9 +61,9 @@ export default function Diagnosis() {
               {TOPLINE.users} users started exactly once.
             </>,
             <>
-              <strong>Desktop fails at the upload far more than mobile</strong> — 41.5%
-              against 18.4% — and matches it everywhere else. The obstacle is producing a
-              file.
+              <strong>Desktop fails at the upload far more than mobile</strong>: 41.5%
+              against 18.4%. It matches mobile everywhere else. The obstacle is
+              producing a file.
             </>,
             <>
               <strong>Sole traders drop hardest at the ID step</strong> (42.8%), where they
@@ -78,10 +78,10 @@ export default function Diagnosis() {
       <Section rail="Topline" title="Where it stands">
         <Stats
           items={[
-            { value: TOPLINE.sessionRate, label: `of sessions complete — ${TOPLINE.completedSessions} / ${TOPLINE.sessions}` },
-            { value: TOPLINE.userRate, label: `of people complete — ${TOPLINE.completedSessions} / ${TOPLINE.users} users` },
-            { value: TOPLINE.neverCompletedRate, label: `never get through at all — ${TOPLINE.neverCompleted} users`, bad: true },
-            { value: TOPLINE.worstStepRate, label: 'drop at ID upload — the worst single step', bad: true },
+            { value: TOPLINE.sessionRate, label: `of sessions complete (${TOPLINE.completedSessions} / ${TOPLINE.sessions})` },
+            { value: TOPLINE.userRate, label: `of people complete (${TOPLINE.completedSessions} / ${TOPLINE.users} users)` },
+            { value: TOPLINE.neverCompletedRate, label: `never get through at all (${TOPLINE.neverCompleted} users)`, bad: true },
+            { value: TOPLINE.worstStepRate, label: 'drop at ID upload, the worst single step', bad: true },
           ]}
         />
         <P>
@@ -98,8 +98,8 @@ export default function Diagnosis() {
       >
         <P>
           Every session reaches field 1 but only 519 of 847 reach field 7, so raw drop
-          counts rank reach, not difficulty. Every rate here is <strong>conditional</strong>{' '}
-          — drops divided by the sessions that got there.
+          counts rank reach, not difficulty. Every rate here is <strong>conditional</strong>:{' '}
+          drops divided by the sessions that got there.
         </P>
         <DataTable
           title="Conditional drop rate by step"
@@ -186,7 +186,7 @@ export default function Diagnosis() {
           The groupings differ. On the number fields Vesland alone is the outlier, with
           Korria and Aldany near-identical (13.3% / 12.7%). At the upload Korria alone is
           the good one and those same two markets are ten points apart (25.3% / 35.7%). Two
-          different shapes point to two different causes — consistent with Korrian documents
+          different shapes point to two different causes, consistent with Korrian documents
           working better with whatever verifies them, though there is no provider or
           document-type column to confirm it.
         </P>
@@ -216,13 +216,13 @@ export default function Diagnosis() {
             { key: 'ratio', header: 'V ÷ best', type: 'num' },
           ]}
           rows={BY_MARKET.map((r) => ({ ...r, key: r.field }))}
-          caption="Steps 2 and 5 show high ratios off tiny absolute differences (1.1% vs 2.3%; 2.6% vs 5.5%) — noise. Steps 3 and 4 are large in both ratio and absolute terms."
+          caption="Steps 2 and 5 show high ratios off tiny absolute differences (1.1% vs 2.3%; 2.6% vs 5.5%): noise. Steps 3 and 4 are large in both ratio and absolute terms."
         />
         <P>A form nobody can read should degrade everything. It doesn't:</P>
         <Bullets
           items={[
             <>
-              Vesland is at parity on the plain fields — Bank details 1.07×, Terms 1.25×,
+              Vesland is at parity on the plain fields: Bank details 1.07×, Terms 1.25×,
               UBO name 1.37×.
             </>,
             <>
@@ -234,8 +234,8 @@ export default function Diagnosis() {
           ]}
         />
         <P>
-          The mix isn't unusual either — mobile share {MARKET_MIX.mobileShare} across all
-          three markets, private limited {MARKET_MIX.privateLimitedShare} — so this isn't
+          The mix isn't unusual either: mobile share {MARKET_MIX.mobileShare} across all
+          three markets, private limited {MARKET_MIX.privateLimitedShare}. So this isn't
           composition. Holding company type constant sharpens it:
         </P>
         <DataTable
@@ -252,11 +252,11 @@ export default function Diagnosis() {
         />
         <Quote>{QUOTES.numbers}</Quote>
 
-        <H3>Naming or format — both fit</H3>
+        <H3>Naming or format: both fit</H3>
         <P>
           The obvious reading is <strong>naming</strong>: three plausible identifiers, two
           generic boxes, nothing saying which goes where. The other is{' '}
-          <strong>format</strong> — the merchant knows which number you want, types it, and
+          <strong>format</strong>: the merchant knows which number you want, types it, and
           the field won't take it because the system expects a different representation.
           Ask a Hungarian merchant for a bank account number and they'll enter the domestic
           one they've used for years; if the form silently accepts only IBAN, they aren't
@@ -266,8 +266,8 @@ export default function Diagnosis() {
         </P>
         <P>
           The timings don't settle it. {REG_NUMBER_TIME.over30s} of Vesland's Registration-number
-          abandons spend over 30 seconds, and the spread is wide — lower quartile{' '}
-          {REG_NUMBER_TIME.p25}, upper quartile {REG_NUMBER_TIME.p75} — which looks like two
+          abandons spend over 30 seconds, and the spread is wide, from a lower quartile of{' '}
+          {REG_NUMBER_TIME.p25} to an upper quartile of {REG_NUMBER_TIME.p75}, which looks like two
           different experiences at one box. But Vesland's median ({REG_NUMBER_TIME.median})
           is no higher than Korria's ({REG_NUMBER_TIME.korriaMedian}). It fails far more
           often without failing more slowly.
@@ -275,7 +275,7 @@ export default function Diagnosis() {
         <P>
           Either way this is content and localisation, not translation. Which content
           changes depends on the mechanism, and{' '}
-          <strong>this export can't separate them</strong> — with no validation or error
+          <strong>this export can't separate them</strong>. With no validation or error
           telemetry, a rejected entry and a never-attempted one look identical.
         </P>
       </Section>
@@ -289,7 +289,7 @@ export default function Diagnosis() {
         <Stats
           items={[
             { value: String(RETRY.firstSessionAbandoned), label: 'users whose first session abandoned' },
-            { value: RETRY.neverReturnedRate, label: `never start again — ${RETRY.neverReturned} users`, bad: true },
+            { value: RETRY.neverReturnedRate, label: `never start again (${RETRY.neverReturned} users)`, bad: true },
             { value: RETRY.sessionsPerUser, label: 'sessions per user across 14 days' },
             { value: RETRY.noBetterRate, label: 'of returners get no further than last time', bad: true },
           ]}
@@ -304,7 +304,7 @@ export default function Diagnosis() {
           everything from field one: {RETRY.gotFurther} got further, {RETRY.gotSameDepth}{' '}
           got as far, {RETRY.gotLessFar} got less far. Returning users hit ID upload at{' '}
           {RETRY.returnerUploadRate}, marginally worse than first-timers'{' '}
-          {RETRY.firstTimerUploadRate} — re-typing six fields doesn't help you find a
+          {RETRY.firstTimerUploadRate}. Re-typing six fields doesn't help you find a
           passport.
         </P>
         <DataTable
@@ -345,7 +345,7 @@ export default function Diagnosis() {
         />
         <P>
           A phone has a camera in the same device as the form. A desktop user has to find an
-          existing scan, or photograph the document and move the file across — work that
+          existing scan, or photograph the document and move the file across, work that
           leaves the browser. Desktop drops at more than twice the mobile rate at exactly
           the step where that matters, and matches mobile everywhere else. More evidence
           that the obstacle is <strong>producing a file</strong>, not being identified.
@@ -368,7 +368,7 @@ export default function Diagnosis() {
             { key: 'rate', header: 'Drop at ID upload', type: 'bar', max: UPLOAD_MAX },
           ]}
           rows={BY_COMPANY_TYPE.map((r) => ({ ...r, key: r.type }))}
-          caption="Bars scaled to a 45% ceiling. Partnership n=66 at this step — indicative rather than precise."
+          caption="Bars scaled to a 45% ceiling. Partnership n=66 at this step, indicative rather than precise."
         />
         <P>
           Sole traders drop roughly 15 points above both other company types and carry the

@@ -28,16 +28,16 @@ export default function Justify() {
       >
         <P>
           The old form runs in registry order, so the step most likely to stop someone
-          comes seventh — after six fields of investment, with {RETRY.neverReturnedRate} of
+          comes seventh, after six fields of investment, with {RETRY.neverReturnedRate} of
           first-time abandoners never coming back.
         </P>
         <Bullets
           items={[
-            'A welcome screen lists what they will need. Only 3% of the 169 who abandoned at the old ID step left inside 30 seconds: unprepared, not unwilling — and seven fields deep is a bad place to find that out.',
+            'A welcome screen lists what they will need. Only 3% of the 169 who abandoned at the old ID step left inside 30 seconds: unprepared, not unwilling, and seven fields deep is a bad place to find that out.',
             'Step 1 asks only what a merchant knows by heart. The work email is the one addition to the brief’s eight fields, and it is what makes save and resume possible.',
             'Identity runs second, not seventh. Running the biggest loss early does not make it easier, it makes failing there cheap. Phone capture leads, because desktop drops 41.5% here against mobile’s 18.4%.',
             'Registry numbers follow the scan, so the document pre-fills name and address. Bank details and terms go last, where commitment is highest and the steps are cheap anyway.',
-            'Each market gets its own registry’s words — VAT number in Vesland, fiscal code in Aldany — with real-shape placeholders and errors that name the likely mistake. Vesland loses 30.3% on the two number fields against roughly 13% elsewhere: vocabulary, not translation.',
+            'Each market gets its own registry’s words (VAT number in Vesland, fiscal code in Aldany) with real-shape placeholders and errors that name the likely mistake. Vesland loses 30.3% on the two number fields against roughly 13% elsewhere: vocabulary, not translation.',
           ]}
         />
       </Section>
@@ -49,7 +49,7 @@ export default function Justify() {
           I accept that, because today a failure there is near-permanent: of{' '}
           {RECOVERY.firstAbandoned} people whose first session abandoned,{' '}
           {RECOVERY.everCompleted} ever completed. With an email captured and their work
-          saved, that drop becomes recoverable — a higher drop at the step for a lower
+          saved, that drop becomes recoverable: a higher drop at the step for a lower
           permanent loss. Smaller costs: one extra field, and step 3 carrying three at
           once.
         </P>
@@ -60,7 +60,7 @@ export default function Justify() {
           <strong>The call.</strong> Does the provider accept identity documents from all
           three markets? Korria drops {idRate.korria}% at the ID step against Vesland’s{' '}
           {idRate.vesland}% and Aldany’s {idRate.aldany}%, and keeps that advantage on both
-          devices — a market factor independent of the device one. If some regional
+          devices, a market factor independent of the device one. If some regional
           documents are not accepted, no copy or preparation fixes it: change provider, or
           give the weakest markets a second route to the same check.
         </P>
@@ -92,7 +92,7 @@ export default function Justify() {
         />
         <P>
           <strong>
-            The metric is that gap — desktop drop minus mobile drop at the identity step.
+            The metric is that gap: desktop drop minus mobile drop at the identity step.
             It is 23.1 points today. If it has not closed to under 5 once this ships, I am
             wrong.
           </strong>{' '}
@@ -101,8 +101,8 @@ export default function Justify() {
         </P>
         <P>
           I name the gap and not the step’s drop rate because the redesign changes who
-          reaches that step — today only 519 of 847 sessions survive six fields to get
-          there — so raw rates are not comparable across the change while a within-cohort
+          reaches that step. Today only 519 of 847 sessions survive six fields to get
+          there, so raw rates are not comparable across the change, while a within-cohort
           device comparison is. If it stays wide with merchants arriving prepared, the loss
           is downstream at the provider.
         </P>
@@ -112,7 +112,7 @@ export default function Justify() {
         <P>
           The mobile flow. Four steps of this density is a desktop shape; on a phone it
           wants breaking down further, one decision per screen, and it wants a native app
-          rather than a browser tab — which changes what step 2 even is, with the camera
+          rather than a browser tab, which changes what step 2 even is, with the camera
           already in hand.
         </P>
       </Section>

@@ -223,7 +223,7 @@ export const FLOW = [
     fields: [
       { label: 'Business / legal name', original: true, note: 'character count' },
       { label: 'Company type', original: true, note: 'drives later steps' },
-      { label: 'Work email', original: false, note: 'new — enables save & resume' },
+      { label: 'Work email', original: false, note: 'new: enables save & resume' },
     ],
   },
   {
@@ -264,7 +264,7 @@ export const KYC_BRANCH = [
   {
     label: 'Phone capture',
     tag: 'default',
-    body: 'QR code on desktop, capture on the phone, desktop updates live. Session is never handed over — the desktop tab stays in control.',
+    body: 'QR code on desktop, capture on the phone, desktop updates live. Session is never handed over; the desktop tab stays in control.',
     outcome: 'Usually verified in minutes',
     primary: true,
   },
@@ -272,7 +272,7 @@ export const KYC_BRANCH = [
     label: 'Upload a file instead',
     tag: 'always offered',
     body: 'For anyone without a phone to hand, or who already has a scan. Never hidden behind the QR.',
-    outcome: 'Approval may take longer — manual review',
+    outcome: 'Approval may take longer: manual review',
   },
 ]
 

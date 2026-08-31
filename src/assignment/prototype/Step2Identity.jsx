@@ -26,7 +26,7 @@ import FakeQr from './FakeQr.jsx'
 const HANDOFF_STEPS = [
   'Scan the QR code with your phone camera.',
   'Your phone walks you through photographing your ID.',
-  'You come straight back here — this page updates on its own, with everything you have already filled in still there.',
+  'You come straight back here, and this page updates on its own, with everything you have already filled in still there.',
 ]
 
 export default function Step2Identity({ values, set, setMany, capture, setCapture }) {
@@ -91,8 +91,8 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
             traders drop at 42.8% here, the worst of any company type. */}
         <Text variant="body-3" color="neutral-faded">
           {isSoleTrader
-            ? 'You registered as a sole trader, so you and your business are the same in law — we need to confirm it is you before you can take payments. '
-            : 'Regulators require us to confirm the identity of the person who owns or controls the business — one real person, even though you are registering a company. '}
+            ? 'You registered as a sole trader, so you and your business are the same in law. We need to confirm it is you before you can take payments. '
+            : 'Regulators require us to confirm the identity of the person who owns or controls the business: one real person, even though you are registering a company. '}
           We check the document and then delete the image. It is never shown to anyone you
           sell to.
         </Text>
@@ -238,7 +238,7 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
               <View direction="row" gap={3} align="center">
                 <View.Item grow>
                   <Text variant="caption-2" color="neutral-faded" monospace>
-                    {capture.progress}% — don't close this tab
+                    {capture.progress}% · don't close this tab
                   </Text>
                 </View.Item>
                 <Button size="small" variant="ghost" onClick={reset}>
@@ -251,7 +251,7 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
 
         {/* UPLOAD DONE — but honest that it isn't verified yet. */}
         {capture.status === 'review' && (
-          <Alert color="warning" title="Uploaded — waiting on a manual check">
+          <Alert color="warning" title="Uploaded, waiting on a manual check">
             <View gap={2}>
               <Text variant="caption-1">
                 We couldn't read this automatically, so someone will check it. You can
@@ -262,7 +262,7 @@ export default function Step2Identity({ values, set, setMany, capture, setCaptur
                   the document, not the application. */}
               <View direction="row" gap={2}>
                 <Button size="small" variant="outline" onClick={startHandoff}>
-                  Use my phone instead — faster
+                  Use my phone instead, it's faster
                 </Button>
                 <Button size="small" variant="ghost" onClick={startUpload}>
                   Upload a different file

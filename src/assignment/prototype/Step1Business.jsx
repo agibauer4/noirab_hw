@@ -41,7 +41,7 @@ export default function Step1Business({ values, set, errors }) {
           <FormControl.Error>{errors.businessName}</FormControl.Error>
         ) : (
           <FormControl.Helper>
-            Your legal name, not your trading name — they can be different.
+            Your legal name, not your trading name. They can be different.
           </FormControl.Helper>
         )}
       </FormControl>

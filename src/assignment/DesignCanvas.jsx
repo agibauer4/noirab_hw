@@ -108,7 +108,7 @@ export default function DesignCanvas({ label, children }) {
           <View direction="row" gap={3} align="center" paddingBottom={4}>
             <View.Item grow>
               <Text variant="caption-2" color="neutral-faded" monospace>
-                {label} — press Esc to exit
+                {label} · press Esc to exit
               </Text>
             </View.Item>
             <Button size="small" variant="outline" onClick={collapse}>
