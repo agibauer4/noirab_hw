@@ -17,7 +17,7 @@ export default function Step3Registration({ values, set, errors }) {
         </Text>
         <Text variant="body-3" color="neutral-faded">
           {values.addressPrefilled
-            ? `These come from your ${market.label} registration documents. We've filled in the address we read from your ID — check it and change anything that's wrong.`
+            ? `These come from your ${market.label} registration documents. We've filled in the address we read from your ID, so check it and change anything that's wrong.`
             : `These come from your ${market.label} registration documents.`}
         </Text>
       </View>
@@ -68,7 +68,7 @@ export default function Step3Registration({ values, set, errors }) {
             onChange={({ checked }) => set('noRegNumber', checked)}
           >
             <Text variant="caption-1">
-              I don't have one — sole traders in {market.label} are not always registered
+              I don't have one. Sole traders in {market.label} are not always registered
             </Text>
           </Checkbox>
         )}
@@ -133,7 +133,7 @@ export default function Step3Registration({ values, set, errors }) {
         </View>
 
         {/* Editable, not locked. A merchant who picked the wrong country in
-            step 1 shouldn't have to walk backwards to fix it — and changing it
+            step 1 shouldn't have to walk backwards to fix it, and changing it
             here re-labels the two number fields above straight away. */}
         <FormControl>
           <FormControl.Label>Country of registration</FormControl.Label>

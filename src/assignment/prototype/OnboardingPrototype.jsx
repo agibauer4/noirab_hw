@@ -47,7 +47,7 @@ function validate(step, values, capture) {
   }
 
   if (step === 2 && capture.status !== 'verified' && capture.status !== 'review') {
-    errors.capture = 'Add your photo ID to continue — use your phone or upload a file.'
+    errors.capture = 'Add your photo ID to continue. Use your phone, or upload a file.'
   }
 
   if (step === 3) {
@@ -127,11 +127,11 @@ export default function OnboardingPrototype() {
             <StatusMark tone={pending ? 'warning' : 'positive'} />
             <View gap={2} align="center">
               <Text variant="featured-2" weight="bold" align="center">
-                {pending ? "You're all set — we're checking your ID" : "You're all set"}
+                {pending ? "You're all set. We're checking your ID" : "You're all set"}
               </Text>
               <Text variant="body-3" color="neutral-faded" align="center">
                 {pending
-                  ? "Everything else is done. Someone is reviewing your ID now — we'll email you within 1 working day, and you can take payments as soon as it clears."
+                  ? "Everything else is done. Someone is reviewing your ID now. We'll email you within 1 working day, and you can take payments as soon as it clears."
                   : "Your account is open and you can start taking payments straight away. We've emailed you a confirmation."}
               </Text>
             </View>
@@ -148,7 +148,7 @@ export default function OnboardingPrototype() {
               </Button>
               {showedDashboardNote && (
                 <Text variant="caption-1" color="neutral-faded" align="center">
-                  The merchant dashboard would open here — beyond the scope of this flow.
+                  The merchant dashboard would open here. Beyond the scope of this flow.
                 </Text>
               )}
             </View>

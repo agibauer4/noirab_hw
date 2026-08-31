@@ -2,6 +2,7 @@ import { View, Text, Container, Card, Divider } from 'reshaped'
 import Diagnosis from './Diagnosis.jsx'
 import NameTheGap from './NameTheGap.jsx'
 import Redesign from './Redesign.jsx'
+import Justify from './Justify.jsx'
 import { PartHeading } from './Blocks.jsx'
 import { PARTS, TOPLINE } from './data.js'
 
@@ -22,7 +23,16 @@ function Masthead() {
           { label: 'Dataset', value: `paylet_sessions.csv\n${TOPLINE.sessions} sessions · ${TOPLINE.users} users` },
           { label: 'Window', value: `${TOPLINE.window}\n14 days` },
           { label: 'Markets', value: 'Vesland · Korria · Aldany' },
-          { label: 'Tools', value: 'Python (csv + collections)\nfor every figure quoted' },
+          // The brief asks which tools were used and what for, so each one is
+          // named with its job rather than listed as a badge.
+          {
+            label: 'Tools',
+            value:
+              'Python (csv + collections): every figure quoted\n' +
+              'Claude Code: the analysis, and building this page\n' +
+              'Reshaped: design system\n' +
+              'GitHub: source and deployment',
+          },
         ].map((item) => (
           <View key={item.label} gap={1}>
             <Text variant="caption-2" color="neutral-faded" monospace weight="medium">
@@ -110,12 +120,14 @@ export default function Assignment() {
           <NameTheGap />
           <PartHeading number="03" title="Redesign" />
           <Redesign />
+          <PartHeading number="04" title="Justify" />
+          <Justify />
 
           <View gap={3}>
             <Divider />
             <Text variant="caption-1" color="neutral-faded" monospace>
-              Paylet is a fictional payment provider used for this exercise. Parts 1 to 3
-              of 4. All figures computed from paylet_sessions.csv ({TOPLINE.sessions}{' '}
+              Paylet is a fictional payment provider used for this exercise. All figures
+              computed from paylet_sessions.csv ({TOPLINE.sessions}{' '}
               rows, {TOPLINE.window}); the funnel is reconstructed from
               last_field_completed and reconciled against recorded completions.
             </Text>

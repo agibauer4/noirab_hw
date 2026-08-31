@@ -14,7 +14,7 @@ const CHECKLIST = [
   },
   {
     title: 'Photo ID',
-    detail: 'A passport, national ID card or driving licence — for whoever owns the business.',
+    detail: 'A passport, national ID card or driving licence, for whoever owns the business.',
   },
   {
     title: 'Your registration numbers',
@@ -76,9 +76,9 @@ export default function Welcome({ onStart }) {
       <div className="welcome-note">
         <Text variant="caption-1" color="neutral-faded">
           <Text as="span" variant="caption-1" weight="medium">
-            Keep your phone within reach
+            Keep your phone within reach.
           </Text>{' '}
-          — the quickest way to add your ID is to photograph it. Uploading a file works
+          The quickest way to add your ID is to photograph it. Uploading a file works
           too, but takes longer to approve.
         </Text>
       </div>

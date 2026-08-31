@@ -59,7 +59,7 @@ export default function NameTheGap() {
 
       <Section rail="The limit" title="Why the data can't close it">
         <P>
-          Both modes predict desktop worse — live capture needs a webcam or a phone handoff,
+          Both modes predict desktop worse. Live capture needs a webcam or a phone handoff;
           a stored file needs a scan the merchant may not have. The split confirms a{' '}
           <strong>file-production problem</strong> and stops there. Two things cut against
           the live-capture reading, neither decisive: desktop and mobile abandon after almost
@@ -73,7 +73,7 @@ export default function NameTheGap() {
           {[
             {
               label: 'If live capture is required',
-              body: 'The cross-device handoff becomes a first-class flow — QR to phone, state carried across, return without losing the session. Telling merchants to have their ID ready would be useless advice.',
+              body: 'The cross-device handoff becomes a first-class flow: QR to phone, state carried across, return without losing the session. Telling merchants to have their ID ready would be useless advice.',
             },
             {
               label: 'If a stored file is accepted',
