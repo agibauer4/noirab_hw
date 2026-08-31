@@ -325,16 +325,17 @@ export const DEVICE_BY_STEP = [
 
 export const DEVICE_BAND = '5.0pp'
 
-// What this traffic can actually settle. 847 sessions over 14 days is 60.5 a
-// day; split two ways, at 80% power and 5% two-sided, against a 34.9% baseline.
-// The point of the table is the last column: small effects are not measurable
-// here in any window worth waiting for.
-export const AB_POWER = [
-  { lift: '+3pp', perArm: '4,037', total: '8,074', days: 134 },
-  { lift: '+5pp', perArm: '1,467', total: '2,934', days: 49 },
-  { lift: '+8pp', perArm: '580', total: '1,160', days: 19, hot: true },
-  { lift: '+10pp', perArm: '373', total: '746', days: 12 },
-]
+// What this traffic can actually settle, behind the A/B claim in Part 04.
+// 847 sessions over 14 days is 60.5 a day; split two ways, at 80% power and
+// 5% two-sided, against the 34.9% baseline:
+//
+//   +3pp   4,037/arm    8,074 total   134 days
+//   +5pp   1,467/arm    2,934 total    49 days
+//   +8pp     580/arm    1,160 total    19 days
+//   +10pp    373/arm      746 total    12 days
+//
+// Not exported: the one-page limit on Part 04 left room for the conclusion but
+// not the table.
 
 // What abandoning costs today, per user rather than per session. The redesign's
 // whole defence of an early ID step rests on making these numbers recoverable.

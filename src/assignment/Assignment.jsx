@@ -23,7 +23,16 @@ function Masthead() {
           { label: 'Dataset', value: `paylet_sessions.csv\n${TOPLINE.sessions} sessions · ${TOPLINE.users} users` },
           { label: 'Window', value: `${TOPLINE.window}\n14 days` },
           { label: 'Markets', value: 'Vesland · Korria · Aldany' },
-          { label: 'Tools', value: 'Python (csv + collections)\nfor every figure quoted' },
+          // The brief asks which tools were used and what for, so each one is
+          // named with its job rather than listed as a badge.
+          {
+            label: 'Tools',
+            value:
+              'Python (csv + collections) — every figure quoted\n' +
+              'Claude Code — the analysis, and building this page\n' +
+              'Reshaped — design system\n' +
+              'GitHub — source and deployment',
+          },
         ].map((item) => (
           <View key={item.label} gap={1}>
             <Text variant="caption-2" color="neutral-faded" monospace weight="medium">
