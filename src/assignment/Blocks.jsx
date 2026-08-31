@@ -5,7 +5,12 @@ import { View, Text, Card, Divider } from 'reshaped'
 // chapters in a single scroll.
 export function PartHeading({ number, title }) {
   return (
-    <View gap={4} as="header">
+    <View
+      gap={4}
+      as="header"
+      className="part-heading"
+      attributes={{ id: `part-${number}` }}
+    >
       <hr className="part-rule" />
       <View gap={1}>
         <Text variant="caption-1" color="primary" monospace weight="medium">

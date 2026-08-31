@@ -1,5 +1,6 @@
-import { View, Text, Container, Card, Badge, Divider } from 'reshaped'
+import { View, Text, Container, Card, Divider } from 'reshaped'
 import Diagnosis from './Diagnosis.jsx'
+import NameTheGap from './NameTheGap.jsx'
 import { PartHeading } from './Blocks.jsx'
 import { PARTS, TOPLINE } from './data.js'
 
@@ -42,28 +43,23 @@ function Masthead() {
 }
 
 // The four parts of the brief. Showing all four with their status is more
-// honest than hiding the ones that aren't written yet.
+// honest than hiding the ones that aren't written yet. Parts that exist on the
+// page link to their heading; the ones still to come are inert, so nothing
+// looks clickable that doesn't go anywhere.
 function PartNav() {
   return (
-    <View direction="row" gap={3} wrap>
-      {PARTS.map((part) => (
-        <View.Item key={part.n} columns={{ s: 12, m: 6, l: 3 }}>
+    <View direction="row" gap={3} wrap as="nav">
+      {PARTS.map((part) => {
+        const card = (
           <Card padding={4} height="100%" className={part.active ? 'glow-primary' : undefined}>
             <View gap={2}>
-              <View direction="row" gap={2} align="center">
-                <Text
-                  variant="caption-1"
-                  monospace
-                  color={part.active ? 'primary' : 'neutral-faded'}
-                >
-                  {part.n}
-                </Text>
-                {part.active && (
-                  <Badge size="small" color="primary" variant="faded">
-                    {part.status}
-                  </Badge>
-                )}
-              </View>
+              <Text
+                variant="caption-1"
+                monospace
+                color={part.active ? 'primary' : 'neutral-faded'}
+              >
+                {part.n}
+              </Text>
               <Text
                 variant="body-2"
                 weight={part.active ? 'semibold' : 'regular'}
@@ -78,8 +74,20 @@ function PartNav() {
               )}
             </View>
           </Card>
-        </View.Item>
-      ))}
+        )
+
+        return (
+          <View.Item key={part.n} columns={{ s: 12, m: 6, l: 3 }}>
+            {part.active ? (
+              <a className="part-link" href={`#part-${part.n}`}>
+                {card}
+              </a>
+            ) : (
+              card
+            )}
+          </View.Item>
+        )
+      })}
     </View>
   )
 }
@@ -97,12 +105,14 @@ export default function Assignment() {
           <PartNav />
           <PartHeading number="01" title="Diagnosis" />
           <Diagnosis />
+          <PartHeading number="02" title="Name the gap" />
+          <NameTheGap />
 
           <View gap={3}>
             <Divider />
             <Text variant="caption-1" color="neutral-faded" monospace>
-              Paylet is a fictional payment provider used for this exercise. Part 1 of 4 —
-              Diagnose. All figures computed from paylet_sessions.csv ({TOPLINE.sessions}{' '}
+              Paylet is a fictional payment provider used for this exercise. Parts 1 and 2
+              of 4. All figures computed from paylet_sessions.csv ({TOPLINE.sessions}{' '}
               rows, {TOPLINE.window}); the funnel is reconstructed from
               last_field_completed and reconciled against recorded completions.
             </Text>

@@ -197,8 +197,28 @@ export const QUOTES = {
 }
 
 export const PARTS = [
-  { n: '01', title: 'Diagnose', status: 'this page', active: true },
-  { n: '02', title: 'Name the gap', status: 'next' },
+  { n: '01', title: 'Diagnose', status: 'on this page', active: true },
+  { n: '02', title: 'Name the gap', status: 'on this page', active: true },
   { n: '03', title: 'Redesign', status: 'to come' },
   { n: '04', title: 'Justify', status: 'to come' },
+]
+
+// --- Part 02 ---------------------------------------------------------------
+
+// ID upload drop, market x device. The point of this table: the desktop
+// penalty is near-constant (20-26pp) across all three markets, while Korria
+// stays ~10pp better on BOTH devices. Two independent factors, not one.
+export const MARKET_DEVICE = [
+  { market: 'Vesland', desktop: 46.3, mobile: 23.2, gap: '23.2pp' },
+  { market: 'Korria', desktop: 33.3, mobile: 12.8, gap: '20.5pp' },
+  { market: 'Aldany', desktop: 46.7, mobile: 20.4, gap: '26.3pp' },
+]
+
+// Control. At Registration number nothing is captured, and the device effect
+// disappears — even reversing in Vesland. Rules out "desktop users are just
+// less committed" as an explanation for the ID-upload gap.
+export const DEVICE_CONTROL = [
+  { market: 'Vesland', desktop: 18.6, mobile: 25.7 },
+  { market: 'Korria', desktop: 10.2, mobile: 5.1 },
+  { market: 'Aldany', desktop: 8.7, mobile: 6.6 },
 ]

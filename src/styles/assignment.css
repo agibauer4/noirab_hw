@@ -40,6 +40,13 @@
   vertical-align: bottom;
 }
 
+/* A numeric header must sit over its own column edge. `.data-num` alone loses
+   to `.data-table th` on specificity (0-1-0 against 0-1-1), which silently left-
+   aligned every numeric heading while its figures stayed right-aligned. */
+.data-table th.data-num {
+  text-align: right;
+}
+
 .data-table td {
   padding: var(--rs-unit-x2) var(--rs-unit-x2) var(--rs-unit-x2) 0;
   border-bottom: 1px solid var(--data-rule);
@@ -118,6 +125,49 @@
   margin: 0;
   border: none;
   background: var(--rs-color-background-primary);
+}
+
+/* Part-nav cards that link to their section. The Card keeps its own surface —
+   the anchor only carries the link behaviour, the hit area and the focus ring. */
+.part-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--rs-radius-large);
+  transition: transform 120ms ease;
+}
+
+.part-link:hover {
+  transform: translateY(-2px);
+}
+
+/* Keyboard users need to see where they are; the Card's own surface gives no
+   focus affordance because the anchor, not the Card, takes focus. */
+.part-link:focus-visible {
+  outline: 2px solid var(--rs-color-background-primary);
+  outline-offset: 3px;
+}
+
+/* Landing flush against the viewport edge reads as a broken jump. */
+.part-heading {
+  scroll-margin-top: var(--rs-unit-x6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .part-link {
+    transition: none;
+  }
+
+  .part-link:hover {
+    transform: none;
+  }
 }
 
 .assignment-quote {
