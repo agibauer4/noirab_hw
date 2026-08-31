@@ -296,14 +296,6 @@
   text-align: center;
 }
 
-/* Placeholder for copy that lands once the design settles. Dashed, so it reads
-   as deliberately unfinished rather than as an empty card. */
-.concept-slot {
-  border: 1px dashed var(--rs-color-border-neutral);
-  border-radius: var(--rs-radius-medium);
-  padding: var(--rs-unit-x4);
-}
-
 /* One step of the flow. Fixed width so the row reads as a sequence of screens
    and scrolls rather than reflowing into a column on narrow viewports. */
 .flow-step {
