@@ -7,8 +7,8 @@
 // that abandoning at a field means every earlier field was completed. The
 // reconstructed chain reconciles exactly to the 296 recorded completions.
 //
-// Drop rates are CONDITIONAL — deaths at a field divided by the sessions that
-// actually reached it — not raw death counts. Every session reaches field 1 but
+// Drop rates are CONDITIONAL — drops at a field divided by the sessions that
+// actually reached it — not raw drop counts. Every session reaches field 1 but
 // only 519 reach field 7, so raw counts rank reach, not difficulty.
 
 export const TOPLINE = {
@@ -26,24 +26,53 @@ export const TOPLINE = {
 
 // Field order as specified in the brief.
 export const FUNNEL = [
-  { step: 1, field: 'Business name', reached: 847, died: 48, rate: 5.7 },
-  { step: 2, field: 'Company type', reached: 799, died: 15, rate: 1.9 },
-  { step: 3, field: 'Tax ID', reached: 784, died: 63, rate: 8.0 },
-  { step: 4, field: 'Registration number', reached: 721, died: 98, rate: 13.6 },
-  { step: 5, field: 'Registered address', reached: 623, died: 31, rate: 5.0 },
-  { step: 6, field: 'UBO name', reached: 592, died: 73, rate: 12.3 },
-  { step: 7, field: 'ID document upload', reached: 519, died: 169, rate: 32.6, worst: true },
-  { step: 8, field: 'Bank details', reached: 350, died: 35, rate: 10.0 },
-  { step: 9, field: 'Terms + submit', reached: 315, died: 19, rate: 6.0 },
+  { step: 1, field: 'Business name', reached: 847, dropped: 48, rate: 5.7 },
+  { step: 2, field: 'Company type', reached: 799, dropped: 15, rate: 1.9 },
+  { step: 3, field: 'Tax ID', reached: 784, dropped: 63, rate: 8.0 },
+  { step: 4, field: 'Registration number', reached: 721, dropped: 98, rate: 13.6 },
+  { step: 5, field: 'Registered address', reached: 623, dropped: 31, rate: 5.0 },
+  { step: 6, field: 'UBO name', reached: 592, dropped: 73, rate: 12.3 },
+  { step: 7, field: 'ID document upload', reached: 519, dropped: 169, rate: 32.6, worst: true },
+  { step: 8, field: 'Bank details', reached: 350, dropped: 35, rate: 10.0 },
+  { step: 9, field: 'Terms + submit', reached: 315, dropped: 19, rate: 6.0 },
 ]
 
 // Time spent on the ID upload field before abandoning, for the 169 sessions
-// that died there. Separates "refused" from "tried and failed".
+// that dropped there. Separates "refused" from "tried and failed".
 export const UPLOAD_TIME = [
   { band: 'Under 30s', gloss: 'instant refusal', sessions: 5, share: 3 },
   { band: '30s - 5 min', gloss: 'actively trying', sessions: 106, share: 63, hot: true },
   { band: 'Over 5 min', gloss: 'stuck, then gave up', sessions: 58, share: 34, hot: true },
 ]
+
+// ID upload drop by market. The important thing about this table is that it
+// groups DIFFERENTLY from the number-field loss: there Vesland alone is the
+// outlier, here Korria alone is the good one. Two different groupings point to
+// two different causes, which is why they're written up as separate findings.
+export const ID_UPLOAD_BY_MARKET = [
+  { market: 'Vesland', reached: 192, dropped: 73, rate: 38.0, worst: true },
+  { market: 'Aldany', reached: 129, dropped: 46, rate: 35.7, hot: true },
+  { market: 'Korria', reached: 198, dropped: 50, rate: 25.3 },
+]
+
+// The two signatures side by side — the comparison that separates them.
+export const SIGNATURES = [
+  { market: 'Vesland', numberFields: 30.3, idUpload: 38.0 },
+  { market: 'Korria', numberFields: 13.3, idUpload: 25.3 },
+  { market: 'Aldany', numberFields: 12.7, idUpload: 35.7 },
+]
+
+// Struggle time is near-identical across markets and devices, which is why it
+// can't be used to tell the candidate mechanisms apart.
+export const UPLOAD_TIME_SPLITS = {
+  vesland: '180s median · 30% over 5 min',
+  korria: '180s median · 34% over 5 min',
+  aldany: '216s median · 41% over 5 min',
+  desktopMedian: '182s',
+  mobileMedian: '214s',
+  desktopOver5: '35%',
+  mobileOver5: '32%',
+}
 
 export const UPLOAD_TIME_STATS = {
   median: '182s',
@@ -88,6 +117,31 @@ export const MARKET_MIX = {
   privateLimitedShare: '53-58%',
 }
 
+// Where the loss sits across the two number fields. Everywhere loses more on
+// the second than the first, but Vesland's skew toward the second is the
+// steepest — people get past Tax ID and then drop at Registration number.
+export const NUMBER_FIELD_ORDER = [
+  { market: 'Vesland', taxId: 11.5, regNumber: 21.3, skew: '1.85x', worst: true },
+  { market: 'Aldany', taxId: 5.2, regNumber: 7.9, skew: '1.52x' },
+  { market: 'Korria', taxId: 5.5, regNumber: 8.2, skew: '1.48x' },
+]
+
+// Time-on-field for the 64 Vesland sessions that dropped at Registration number.
+// The spread is the interesting part: a tight lower quartile and a very long
+// upper one, which looks like two different failure experiences at one field.
+export const REG_NUMBER_TIME = {
+  n: 64,
+  min: '17s',
+  p25: '85s',
+  median: '129s',
+  p75: '1,206s',
+  max: '2,159s',
+  under60: '16%',
+  over30s: '91%',
+  korriaMedian: '159s',
+  aldanyMedian: '620s',
+}
+
 export const RETRY = {
   firstSessionAbandoned: 460,
   neverReturned: 337,
@@ -119,16 +173,16 @@ export const PERMANENT_LOSSES = [
 ]
 
 export const BY_DEVICE = [
-  { device: 'Desktop', sessions: 530, reached: 318, died: 132, rate: 41.5, worst: true },
-  { device: 'Mobile', sessions: 317, reached: 201, died: 37, rate: 18.4 },
+  { device: 'Desktop', sessions: 530, reached: 318, dropped: 132, rate: 41.5, worst: true },
+  { device: 'Mobile', sessions: 317, reached: 201, dropped: 37, rate: 18.4 },
 ]
 
 export const DEVICE_COMPLETION = { desktop: '29.6%', mobile: '43.8%' }
 
 export const BY_COMPANY_TYPE = [
-  { type: 'Sole trader', sessions: 274, reached: 159, died: 68, rate: 42.8, worst: true },
-  { type: 'Partnership', sessions: 106, reached: 66, died: 19, rate: 28.8, thin: true },
-  { type: 'Private limited', sessions: 467, reached: 294, died: 82, rate: 27.9 },
+  { type: 'Sole trader', sessions: 274, reached: 159, dropped: 68, rate: 42.8, worst: true },
+  { type: 'Partnership', sessions: 106, reached: 66, dropped: 19, rate: 28.8, thin: true },
+  { type: 'Private limited', sessions: 467, reached: 294, dropped: 82, rate: 27.9 },
 ]
 
 export const SOLE_TRADER_COMPLETION = '29.6%'

@@ -109,6 +109,17 @@
   max-width: 68ch;
 }
 
+/* Part-level rule. Deliberately heavier and primary-coloured, where the rules
+   between sections inside a part are the theme's faint neutral Divider — so the
+   document reads as two levels of hierarchy (part > section) rather than one
+   long flat list, once parts 02-04 land. */
+.part-rule {
+  height: 2px;
+  margin: 0;
+  border: none;
+  background: var(--rs-color-background-primary);
+}
+
 .assignment-quote {
   border-left: 2px solid var(--rs-color-border-warning);
   padding-left: var(--rs-unit-x4);

@@ -1,5 +1,6 @@
 import { View, Text, Container, Card, Badge, Divider } from 'reshaped'
 import Diagnosis from './Diagnosis.jsx'
+import { PartHeading } from './Blocks.jsx'
 import { PARTS, TOPLINE } from './data.js'
 
 function Masthead() {
@@ -7,14 +8,10 @@ function Masthead() {
     <View gap={6}>
       <View gap={4}>
         <Text variant="caption-1" color="primary" monospace weight="medium">
-          Paylet · KYB onboarding · take-home, part 1 of 4
+          Paylet · KYB onboarding · take-home assignment
         </Text>
         <Text variant="featured-1" weight="bold">
           Nobody is quitting because the form is long
-        </Text>
-        <Text variant="body-1" color="neutral-faded" className="prose-measure">
-          A diagnosis of merchant drop-off in Paylet's KYB registration, built from{' '}
-          {TOPLINE.sessions} sessions and three support quotes.
         </Text>
       </View>
 
@@ -98,6 +95,7 @@ export default function Assignment() {
         <View gap={10} paddingBlock={{ s: 6, m: 10 }}>
           <Masthead />
           <PartNav />
+          <PartHeading number="01" title="Diagnosis" />
           <Diagnosis />
 
           <View gap={3}>

@@ -1,13 +1,34 @@
 import { View, Text, Card, Divider } from 'reshaped'
 
+// A part-level heading — one rung above the Section headings inside it. Parts
+// 02-04 reuse this, so the four parts of the brief stay legible as distinct
+// chapters in a single scroll.
+export function PartHeading({ number, title }) {
+  return (
+    <View gap={4} as="header">
+      <hr className="part-rule" />
+      <View gap={1}>
+        <Text variant="caption-1" color="primary" monospace weight="medium">
+          Part {number}
+        </Text>
+        <Text variant="featured-2" weight="bold">
+          {title}
+        </Text>
+      </View>
+    </View>
+  )
+}
+
 // A titled section with a small monospace rail label above it. The rail is the
 // document's structural device: it names what kind of move each section makes
 // (Method / Finding 01 / Ruling out), which is information, not decoration.
-export function Section({ rail, title, dek, children }) {
+// `rule` is off for the first section after a PartHeading, which already
+// carries its own heavier rule — two lines in a row reads as a mistake.
+export function Section({ rail, title, dek, children, rule = true }) {
   return (
     <View gap={4} as="section">
       <View gap={3}>
-        <Divider />
+        {rule && <Divider />}
         <Text variant="caption-2" color="primary" monospace weight="medium">
           {rail}
         </Text>
@@ -82,44 +103,21 @@ export function Quote({ children, source = 'Paylet support' }) {
   )
 }
 
-// The read on a finding — what I think the data means, kept visually distinct
-// from the evidence that supports it.
-export function Verdict({ heading = 'What I think is happening', children }) {
-  return (
-    <Card padding={4} className="glow-primary">
-      <View gap={2}>
-        <Text variant="caption-2" color="primary" monospace weight="medium">
-          {heading}
-        </Text>
-        {children}
-      </View>
-    </Card>
-  )
-}
-
-// A caveat or aside — flagged, but deliberately quieter than a Verdict.
-export function Note({ heading, children }) {
-  return (
-    <Card padding={4}>
-      <View gap={2}>
-        <Text variant="caption-2" color="neutral-faded" monospace weight="medium">
-          {heading}
-        </Text>
-        {children}
-      </View>
-    </Card>
-  )
-}
-
+// Unnumbered on purpose: these lists are alternatives and reasons, not
+// sequences, so numbering them would imply an order that isn't there.
 export function Bullets({ items }) {
   return (
-    <View gap={3} className="prose-measure">
+    <View gap={2} className="prose-measure">
       {items.map((item, i) => (
-        <View key={i} direction="row" gap={3} align="start">
-          <Text variant="caption-1" color="primary" monospace>
-            {String(i + 1).padStart(2, '0')}
+        // View wraps by default, and the body text takes its full natural width —
+        // without View.Item the dash gets pushed onto its own line.
+        <View key={i} direction="row" gap={3} align="start" wrap={false}>
+          <Text variant="body-2" color="primary">
+            —
           </Text>
-          <Text variant="body-2">{item}</Text>
+          <View.Item grow>
+            <Text variant="body-2">{item}</Text>
+          </View.Item>
         </View>
       ))}
     </View>

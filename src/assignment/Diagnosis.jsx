@@ -1,16 +1,19 @@
-import { View, Text, Card } from 'reshaped'
+import { View } from 'reshaped'
 import DataTable from './DataTable.jsx'
-import { Section, P, H3, Stats, Quote, Verdict, Note, Bullets } from './Blocks.jsx'
+import { Section, P, H3, Stats, Quote, Bullets } from './Blocks.jsx'
 import {
   TOPLINE,
   FUNNEL,
   UPLOAD_TIME,
   UPLOAD_TIME_STATS,
+  ID_UPLOAD_BY_MARKET,
+  SIGNATURES,
   BY_MARKET,
   MARKET_SIZES,
   MARKET_COMPLETION,
   NUMBER_FIELD_LOSS,
   NUMBER_FIELD_LOSS_ALL,
+  REG_NUMBER_TIME,
   MARKET_MIX,
   RETRY,
   PERMANENT_LOSSES,
@@ -32,24 +35,43 @@ const UPLOAD_MAX = 45
 export default function Diagnosis() {
   return (
     <View gap={10}>
-      {/* ---------------- method ---------------- */}
-      <Section
-        rail="Method"
-        title="Counting deaths ranks the wrong fields"
-        dek="Every session passes through field 1; only 519 of 847 ever reach field 7. The raw number of sessions that died at a field mostly measures how many people got there, not how hard the field is."
-      >
+      {/* ---------------- summary ---------------- */}
+      <Section rail="Summary" title="Five findings" rule={false}>
         <P>
-          Everything below uses <strong>conditional drop rate</strong> — sessions that died
-          at a field, divided by sessions that actually reached it. The two rankings
-          genuinely disagree. <em>Business name</em> is the 5th most common place to die
-          (48 sessions) but one of the safest fields at 5.7%. <em>Bank details</em> killed
-          fewer sessions in absolute terms (35) yet is nearly twice as lethal per person
-          who reaches it (10.0%).
+          {TOPLINE.sessionRate} of sessions complete. The loss isn't spread across a long
+          form — six of the nine steps drop under 10%, and three specific points do the
+          damage.
         </P>
-        <P>
-          Reading raw counts would put effort into the top of the form, where the volume
-          is. Reading rates puts it where the difficulty is.
-        </P>
+        <Bullets
+          items={[
+            <>
+              <strong>The ID upload is where it breaks.</strong> 32.6% of everyone who
+              reaches it abandons, 2.4× the next worst step. Only 3% leave inside 30
+              seconds, so this is failure under effort, not refusal.
+            </>,
+            <>
+              <strong>Vesland loses merchants on the two registry-number fields.</strong>{' '}
+              30.3% against roughly 13% in the other markets, and it survives a company-type
+              control. Not a language barrier — Vesland is at parity across the rest of the
+              form.
+            </>,
+            <>
+              <strong>73% of people who abandon never come back.</strong> With no save or
+              resume, one bad step ends the relationship: {RETRY.startedOnce} of{' '}
+              {TOPLINE.users} users started exactly once.
+            </>,
+            <>
+              <strong>Desktop fails at the upload far more than mobile</strong> — 41.5%
+              against 18.4% — and matches it everywhere else. The obstacle is producing a
+              file.
+            </>,
+            <>
+              <strong>Sole traders drop hardest at the ID step</strong> (42.8%), where they
+              are asked to prove a beneficial owner's identity after already giving their
+              own name.
+            </>,
+          ]}
+        />
       </Section>
 
       {/* ---------------- topline ---------------- */}
@@ -63,9 +85,8 @@ export default function Diagnosis() {
           ]}
         />
         <P>
-          The session rate and the person rate differ because {TOPLINE.repeatUsers} people
-          started more than once. That gap is small — and Finding 03 shows why it stays
-          small.
+          Session and person rates differ because {TOPLINE.repeatUsers} people started more
+          than once. Finding 03 covers why that number is so low.
         </P>
       </Section>
 
@@ -73,78 +94,115 @@ export default function Diagnosis() {
       <Section
         rail="The funnel"
         title="Three walls, not a slope"
-        dek="If length were the problem, drop rates would rise gently as fatigue accumulated. They don't. Six of the nine steps sit under 10%, and the losses pile up at three specific places."
+        dek="Fatigue would produce a gentle rise. Six of the nine steps sit under 10% and the losses concentrate in three places."
       >
+        <P>
+          Every session reaches field 1 but only 519 of 847 reach field 7, so raw drop
+          counts rank reach, not difficulty. Every rate here is <strong>conditional</strong>{' '}
+          — drops divided by the sessions that got there.
+        </P>
         <DataTable
           title="Conditional drop rate by step"
-          subtitle={`${TOPLINE.sessions} sessions · ${TOPLINE.window} · deaths ÷ sessions reaching that step`}
+          subtitle={`${TOPLINE.sessions} sessions · ${TOPLINE.window}`}
           columns={[
             { key: 'step', header: '', type: 'step' },
             { key: 'field', header: 'Step', type: 'label', badge: 'worst' },
             { key: 'reached', header: 'Reached', type: 'num' },
-            { key: 'died', header: 'Died', type: 'num' },
+            { key: 'dropped', header: 'Dropped', type: 'num' },
             { key: 'rate', header: 'Drop rate', type: 'bar', max: FUNNEL_MAX },
           ]}
           rows={FUNNEL.map((r) => ({ ...r, key: r.field }))}
-          caption="Bars scaled to a 40% ceiling. Colour intensity encodes the same value as the printed number, so the figure reads without colour. Reached counts are reconstructed from last_field_completed; the chain reconciles exactly to the 296 recorded completions."
+          caption="Bars scaled to a 40% ceiling; every bar is labelled, so the figure reads without colour. Reached counts are reconstructed from last_field_completed and reconcile exactly to the 296 recorded completions."
         />
         <P>
-          ID document upload is not just the worst step, it is{' '}
-          <strong>2.4× worse than the next worst</strong>. One in three merchants who get
-          all the way to field 7 — having already typed their company name, tax ID,
-          registration number, address and beneficial owner — abandon there.
+          ID document upload is <strong>2.4× worse than the next worst step</strong>. A
+          third of everyone who reaches field 7 abandons there, after completing six fields.
         </P>
       </Section>
 
       {/* ---------------- finding 01 ---------------- */}
       <Section
         rail="Finding 01"
-        title="The ID upload isn't a refusal. It's a failed attempt."
-        dek="A privacy objection looks like a fast exit. This looks like people trying hard and losing."
+        title="The ID upload is a failed attempt, not a refusal"
       >
         <DataTable
-          title="Time spent on ID upload before abandoning"
-          subtitle="169 abandoned sessions · seconds_on_last_field"
+          title="Time on ID upload before abandoning"
+          subtitle="169 abandoned sessions"
           columns={[
             { key: 'band', header: 'Time on field', type: 'label' },
             { key: 'sessions', header: 'Sessions', type: 'num' },
-            // Shares of 169 rounded to whole percents — a decimal here would
-            // claim precision the underlying counts don't have.
             { key: 'share', header: 'Share', type: 'bar', max: SHARE_MAX, decimals: 0 },
           ]}
           rows={UPLOAD_TIME.map((r) => ({ ...r, key: r.band }))}
-          caption={`Median ${UPLOAD_TIME_STATS.median}, mean ${UPLOAD_TIME_STATS.mean} — the mean is dragged up by a long tail. The longest session sat on this one field for ${UPLOAD_TIME_STATS.max} (${UPLOAD_TIME_STATS.maxMinutes}) and still left.`}
+          caption={`Median ${UPLOAD_TIME_STATS.median}, mean ${UPLOAD_TIME_STATS.mean}. The longest session sat on this one field for ${UPLOAD_TIME_STATS.maxMinutes} and still left.`}
         />
         <P>
-          Only <strong>3% bounce in under 30 seconds</strong>. The other 97% engage with
-          the step and fail anyway. A third spend more than five minutes on a single
-          field. That is the signature of someone leaving the desk to find a passport,
-          scanning something, fighting a file size limit, or waiting on an upload with no
-          progress indicator — not someone who objects to being asked.
+          3% leave inside 30 seconds; 34% spend more than five minutes. That is effort, not
+          objection.
         </P>
         <Quote>{QUOTES.identity}</Quote>
+        <P>Three mechanisms fit:</P>
+        <Bullets
+          items={[
+            <>
+              <strong>Not prepared.</strong> The merchant leaves to find the document and
+              loses the session while they're gone.
+            </>,
+            <>
+              <strong>The upload flow fails them.</strong> No progress, no stated size or
+              format limits, silent errors. Someone holding the document can still fail
+              here.
+            </>,
+            <>
+              <strong>The document is rejected downstream.</strong> A KYC provider that
+              doesn't handle certain regional ID types would fail some markets and not
+              others.
+            </>,
+          ]}
+        />
+
+        <H3>The third has a fingerprint, and it shows up</H3>
+        <DataTable
+          title="ID upload drop rate by market"
+          columns={[
+            { key: 'market', header: 'Market', type: 'label' },
+            { key: 'reached', header: 'Reached', type: 'num' },
+            { key: 'dropped', header: 'Dropped', type: 'num' },
+            { key: 'rate', header: 'Drop at ID upload', type: 'bar', max: UPLOAD_MAX },
+          ]}
+          rows={ID_UPLOAD_BY_MARKET.map((r) => ({ ...r, key: r.market }))}
+          caption="Bars scaled to a 45% ceiling."
+        />
+        <DataTable
+          title="Two different market signatures"
+          columns={[
+            { key: 'market', header: 'Market', type: 'label' },
+            { key: 'numberFields', header: 'Number-field loss', type: 'num', suffix: '%' },
+            { key: 'idUpload', header: 'ID-upload drop', type: 'num', suffix: '%' },
+          ]}
+          rows={SIGNATURES.map((r) => ({ ...r, key: r.market }))}
+        />
         <P>
-          The quote adds the missing half. People aren't refusing — but they also aren't{' '}
-          <em>expecting</em>. The request arrives seven fields deep, unannounced, at the
-          exact moment it demands a physical object the merchant almost certainly doesn't
-          have on the desk.
+          The groupings differ. On the number fields Vesland alone is the outlier, with
+          Korria and Aldany near-identical (13.3% / 12.7%). At the upload Korria alone is
+          the good one and those same two markets are ten points apart (25.3% / 35.7%). Two
+          different shapes point to two different causes — consistent with Korrian documents
+          working better with whatever verifies them, though there is no provider or
+          document-type column to confirm it.
         </P>
-        <Verdict>
-          <P>
-            This is a <strong>preparedness failure, not a willingness failure</strong>. The
-            form asks for something that requires leaving the form, at a point where
-            leaving the form destroys everything already typed. The five-minute-plus group
-            are people who went to find the document and lost the session while they were
-            gone.
-          </P>
-        </Verdict>
+        <P>
+          The step fails people who are <strong>trying to comply</strong>. Which of the
+          three mechanisms is doing the damage isn't visible here: no column separates a
+          walk-away from a retry loop, so eleven minutes looks the same whether someone went
+          to find a passport or watched the same file fail six times.
+        </P>
       </Section>
 
       {/* ---------------- finding 02 ---------------- */}
       <Section
         rail="Finding 02"
-        title="Vesland has a vocabulary problem, not a translation problem"
-        dek={`Vesland completes at ${MARKET_COMPLETION.vesland} against Korria's ${MARKET_COMPLETION.korria}. The obvious hypothesis is a language barrier. The data argues against it — and points somewhere more specific.`}
+        title="Vesland's problem is vocabulary, not translation"
+        dek={`Vesland completes at ${MARKET_COMPLETION.vesland} against Korria's ${MARKET_COMPLETION.korria}. The obvious hypothesis is a language barrier; the data argues against it.`}
       >
         <DataTable
           title="Drop rate by step, per market"
@@ -158,41 +216,31 @@ export default function Diagnosis() {
             { key: 'ratio', header: 'V ÷ best', type: 'num' },
           ]}
           rows={BY_MARKET.map((r) => ({ ...r, key: r.field }))}
-          caption="Steps 2 and 5 show high ratios off very small absolute differences (1.1% vs 2.3%; 2.6% vs 5.5%) — noise, not signal. The steps that matter are 3 and 4, where the gap is large in both ratio and absolute terms."
+          caption="Steps 2 and 5 show high ratios off tiny absolute differences (1.1% vs 2.3%; 2.6% vs 5.5%) — noise. Steps 3 and 4 are large in both ratio and absolute terms."
         />
-
-        <H3>Why I don't think this is a language barrier</H3>
-        <P>A form the merchant can't read should degrade everything. It doesn't:</P>
+        <P>A form nobody can read should degrade everything. It doesn't:</P>
         <Bullets
           items={[
             <>
-              <strong>Vesland is at parity on the plain fields.</strong> Bank details 1.07×,
-              Terms 1.25×, UBO name 1.37×. If comprehension were broken, filling in an
-              address and typing a name would suffer too. They don't.
+              Vesland is at parity on the plain fields — Bank details 1.07×, Terms 1.25×,
+              UBO name 1.37×.
             </>,
             <>
-              <strong>The door test fails.</strong> The purest language signal is someone
-              landing, not understanding the page, and leaving before completing a single
-              field. Vesland does that at <strong>4.9% — better than Korria's 7.7%</strong>.
-              Vesland merchants can read the form well enough to start it.
+              It fails the door test. Leaving before completing a single field is the purest
+              language signal, and Vesland does that at{' '}
+              <strong>4.9%, better than Korria's 7.7%</strong>.
             </>,
-            <>
-              <strong>The damage is surgical.</strong> All of Vesland's excess loss sits on
-              steps 3 and 4 — the two fields that ask for a registry number.
-            </>,
+            <>All of the excess sits on steps 3 and 4, the two registry-number fields.</>,
           ]}
         />
-
-        <H3>It survives a control</H3>
         <P>
-          Vesland's market mix isn't unusual (mobile share {MARKET_MIX.mobileShare} across
-          all three markets; private limited {MARKET_MIX.privateLimitedShare}), so this
-          isn't a composition effect. Holding company type constant makes the gap sharper,
-          not softer:
+          The mix isn't unusual either — mobile share {MARKET_MIX.mobileShare} across all
+          three markets, private limited {MARKET_MIX.privateLimitedShare} — so this isn't
+          composition. Holding company type constant sharpens it:
         </P>
         <DataTable
           title="Combined loss on Tax ID + Registration number"
-          subtitle="private limited companies only · % of those reaching Tax ID"
+          subtitle="private limited only · % of those reaching Tax ID"
           columns={[
             { key: 'market', header: 'Market', type: 'label' },
             { key: 'reached', header: 'Reached', type: 'num' },
@@ -200,44 +248,43 @@ export default function Diagnosis() {
             { key: 'rate', header: 'Loss on the two number fields', type: 'bar', max: LOSS_MAX },
           ]}
           rows={NUMBER_FIELD_LOSS.map((r) => ({ ...r, key: r.market }))}
-          caption={`Bars scaled to a 40% ceiling. Same comparison across all company types: Vesland ${NUMBER_FIELD_LOSS_ALL.vesland}, Korria ${NUMBER_FIELD_LOSS_ALL.korria}, Aldany ${NUMBER_FIELD_LOSS_ALL.aldany}.`}
+          caption={`Bars scaled to a 40% ceiling. Across all company types: Vesland ${NUMBER_FIELD_LOSS_ALL.vesland}, Korria ${NUMBER_FIELD_LOSS_ALL.korria}, Aldany ${NUMBER_FIELD_LOSS_ALL.aldany}.`}
         />
-        <P>
-          A Vesland private limited company is{' '}
-          <strong>roughly four times more likely</strong> to die on the two number fields
-          than the same company type in either other market.
-        </P>
         <Quote>{QUOTES.numbers}</Quote>
-        <Verdict>
-          <P>
-            Not “the form isn't translated” but{' '}
-            <strong>“the two labels don't map onto what Vesland's registry actually calls
-            these numbers.”</strong> A merchant holding three plausible identifiers and two
-            generically-labelled boxes cannot tell which goes where, and the form gives
-            them nothing to check against — no format hint, no example, no explanation of
-            where to find each number.
-          </P>
-          <P>
-            That is still a language problem, in the narrow sense that matters: the{' '}
-            <em>terminology</em> is wrong for the market. It is a content and localisation
-            fix, not a re-translation.
-          </P>
-        </Verdict>
-        <Note heading="Caveat — and it's a real one">
-          <P>
-            The dataset has no language, locale or browser-locale column, so I cannot test
-            the translation hypothesis directly. I am inferring from the <em>shape</em> of
-            the loss, not measuring language. The shape is strong enough that I'd act on
-            it, and the confidence section records what would change my mind.
-          </P>
-        </Note>
+
+        <H3>Naming or format — both fit</H3>
+        <P>
+          The obvious reading is <strong>naming</strong>: three plausible identifiers, two
+          generic boxes, nothing saying which goes where. The other is{' '}
+          <strong>format</strong> — the merchant knows which number you want, types it, and
+          the field won't take it because the system expects a different representation.
+          Ask a Hungarian merchant for a bank account number and they'll enter the domestic
+          one they've used for years; if the form silently accepts only IBAN, they aren't
+          confused about which account, they're confused about why the right answer is being
+          refused. Registry numbers with market-specific prefixes or check digits fail the
+          same way.
+        </P>
+        <P>
+          The timings don't settle it. {REG_NUMBER_TIME.over30s} of Vesland's Registration-number
+          abandons spend over 30 seconds, and the spread is wide — lower quartile{' '}
+          {REG_NUMBER_TIME.p25}, upper quartile {REG_NUMBER_TIME.p75} — which looks like two
+          different experiences at one box. But Vesland's median ({REG_NUMBER_TIME.median})
+          is no higher than Korria's ({REG_NUMBER_TIME.korriaMedian}). It fails far more
+          often without failing more slowly.
+        </P>
+        <P>
+          Either way this is content and localisation, not translation. Which content
+          changes depends on the mechanism, and{' '}
+          <strong>this export can't separate them</strong> — with no validation or error
+          telemetry, a rejected entry and a never-attempted one look identical.
+        </P>
       </Section>
 
       {/* ---------------- finding 03 ---------------- */}
       <Section
         rail="Finding 03"
         title="Almost nobody comes back"
-        dek="No autosave, no draft, no resume. The visible cost is a lost session. The real cost is that the session is the whole relationship."
+        dek="No autosave, no draft, no resume. The visible cost is a lost session; the real cost is that the session is the whole relationship."
       >
         <Stats
           items={[
@@ -248,27 +295,17 @@ export default function Diagnosis() {
           ]}
         />
         <P>
-          Of {TOPLINE.users} people, <strong>{RETRY.startedOnce} started exactly once</strong>.
-          {' '}{RETRY.startedTwice} started twice, {RETRY.startedThrice} started three times.
-          When someone abandons, the overwhelmingly likely next event is nothing at all —
-          three quarters of them are never seen again inside the fortnight.
+          {RETRY.startedOnce} of {TOPLINE.users} people started exactly once. When someone
+          abandons, the likely next event is nothing at all.
         </P>
         <Quote>{QUOTES.resume}</Quote>
-
-        <H3>Retrying doesn't reliably help</H3>
         <P>
-          The {RETRY.returned} people who did come back had to re-type everything from
-          field one. It bought them less than you'd hope: {RETRY.gotFurther} got further
-          than their previous attempt, {RETRY.gotSameDepth} got exactly as far, and{' '}
-          <strong>{RETRY.gotLessFar} got less far than before</strong>. So 45% of returners
-          spent a second full effort and ended up no better off.
-        </P>
-        <P>
-          The reason is that the wall doesn't move. Returning users hit ID upload at{' '}
-          {RETRY.returnerUploadRate}, slightly <em>worse</em> than first-timers'{' '}
-          {RETRY.firstTimerUploadRate}. Re-typing six fields doesn't help you find a
-          passport. (The third-attempt group is only 20 sessions — I'm not drawing
-          conclusions from it.)
+          Retrying doesn't reliably help. The {RETRY.returned} who came back re-typed
+          everything from field one: {RETRY.gotFurther} got further, {RETRY.gotSameDepth}{' '}
+          got as far, {RETRY.gotLessFar} got less far. Returning users hit ID upload at{' '}
+          {RETRY.returnerUploadRate}, marginally worse than first-timers'{' '}
+          {RETRY.firstTimerUploadRate} — re-typing six fields doesn't help you find a
+          passport.
         </P>
         <DataTable
           title="Where the people who never returned gave up"
@@ -280,26 +317,19 @@ export default function Diagnosis() {
             { key: 'share', header: 'Share of permanent losses', type: 'bar', max: PERMANENT_MAX },
           ]}
           rows={PERMANENT_LOSSES.map((r) => ({ ...r, key: r.field }))}
-          caption="Bars scaled to a 25% ceiling. ID upload and Registration number together account for 43.6% of everyone permanently lost."
+          caption="Bars scaled to a 25% ceiling. ID upload and Registration number account for 43.6% of everyone permanently lost."
         />
-        <Verdict>
-          <P>
-            The absence of save-and-resume isn't a separate problem sitting alongside the
-            other two — it is the{' '}
-            <strong>amplifier that converts them into permanent losses</strong>. A merchant
-            who hits the ID wall has two options: abandon everything, or leave the tab open
-            and hope. Most abandon, and 73% of those never return. Fix the ID step and the
-            number fields and you reduce how often people hit a wall; add save-and-resume
-            and hitting a wall stops being fatal.
-          </P>
-        </Verdict>
+        <P>
+          The missing save-and-resume isn't a fourth problem alongside the others. It's the{' '}
+          <strong>amplifier that turns them into permanent losses</strong>.
+        </P>
       </Section>
 
       {/* ---------------- finding 04 ---------------- */}
       <Section
         rail="Finding 04"
-        title="Desktop is the worse device — and only at the upload"
-        dek={`Mobile completes at ${DEVICE_COMPLETION.mobile}; desktop at ${DEVICE_COMPLETION.desktop}. That inversion of the usual pattern has a single cause.`}
+        title="Desktop is the worse device, and only at the upload"
+        dek={`Mobile completes at ${DEVICE_COMPLETION.mobile}, desktop at ${DEVICE_COMPLETION.desktop}.`}
       >
         <DataTable
           title="ID upload drop rate by device"
@@ -307,24 +337,18 @@ export default function Diagnosis() {
           columns={[
             { key: 'device', header: 'Device', type: 'label' },
             { key: 'reached', header: 'Reached', type: 'num' },
-            { key: 'died', header: 'Died', type: 'num' },
+            { key: 'dropped', header: 'Dropped', type: 'num' },
             { key: 'rate', header: 'Drop at ID upload', type: 'bar', max: UPLOAD_MAX },
           ]}
           rows={BY_DEVICE.map((r) => ({ ...r, key: r.device }))}
-          caption="Bars scaled to a 45% ceiling. Across the other eight steps the two devices track each other within a few points — the divergence is specific to the upload."
+          caption="Bars scaled to a 45% ceiling. Across the other eight steps the devices track each other within a few points."
         />
         <P>
-          A phone has a camera in the same device as the form. A desktop user has to find
-          an existing scan, or photograph the document on their phone and get the file onto
-          the computer — a task that leaves the browser entirely.{' '}
-          <strong>Desktop drops at more than twice the mobile rate</strong> at exactly the
-          step where that difference bites, and roughly matches mobile everywhere else.
-        </P>
-        <P>
-          This reinforces Finding 01: the problem is the{' '}
-          <em>logistics of producing a file</em>, not reluctance to be identified. Desktop
-          users aren't more privacy-conscious than mobile users; they just have further to
-          walk.
+          A phone has a camera in the same device as the form. A desktop user has to find an
+          existing scan, or photograph the document and move the file across — work that
+          leaves the browser. Desktop drops at more than twice the mobile rate at exactly
+          the step where that matters, and matches mobile everywhere else. More evidence
+          that the obstacle is <strong>producing a file</strong>, not being identified.
         </P>
       </Section>
 
@@ -340,183 +364,19 @@ export default function Diagnosis() {
             { key: 'type', header: 'Company type', type: 'label' },
             { key: 'sessions', header: 'Sessions', type: 'num' },
             { key: 'reached', header: 'Reached', type: 'num' },
-            { key: 'died', header: 'Died', type: 'num' },
+            { key: 'dropped', header: 'Dropped', type: 'num' },
             { key: 'rate', header: 'Drop at ID upload', type: 'bar', max: UPLOAD_MAX },
           ]}
           rows={BY_COMPANY_TYPE.map((r) => ({ ...r, key: r.type }))}
-          caption="Bars scaled to a 45% ceiling. Partnership n=66 at this step — the smallest cell here, and I'd treat its exact value as indicative rather than precise."
+          caption="Bars scaled to a 45% ceiling. Partnership n=66 at this step — indicative rather than precise."
         />
         <P>
-          Sole traders drop at the ID upload{' '}
-          <strong>roughly 15 points above both other company types</strong>. They also carry
-          the lowest overall completion rate ({SOLE_TRADER_COMPLETION}). Read alongside the
-          “I thought I was registering a company, not myself” quote, the likely mechanism is
-          that the flow asks a sole trader to name a beneficial owner and then prove that
-          person's identity — when the merchant experiences the business and themselves as
-          one thing and has already given their name once.
+          Sole traders drop roughly 15 points above both other company types and carry the
+          lowest overall completion rate ({SOLE_TRADER_COMPLETION}). The flow asks them to
+          name a beneficial owner and then prove that person's identity, when they have
+          already given their own name once and experience the business and themselves as
+          one thing.
         </P>
-        <P>
-          Whatever the label says, a sole trader is being asked to do something that reads
-          as duplicated, unexplained, or intrusive, at the most expensive point in the form.
-        </P>
-      </Section>
-
-      {/* ---------------- ruling out ---------------- */}
-      <Section rail="Ruling out" title="What the data does not support">
-        <Bullets
-          items={[
-            <>
-              <strong>“The form is too long.”</strong> Six of nine steps drop under 10%.
-              Company type (1.9%), registered address (5.0%) and terms + submit (6.0%) are
-              all late-ish, all fine. Length is a cost people pay willingly right up until
-              they hit a specific obstacle. Cutting fields wouldn't touch the walls — and
-              the brief doesn't allow it anyway.
-            </>,
-            <>
-              <strong>“People don't want to give ID.”</strong> 97% of ID-upload abandoners
-              spend over 30 seconds on the step, and a third spend over five minutes. That's
-              effort, not objection.
-            </>,
-            <>
-              <strong>“Vesland can't read the form.”</strong> Vesland is at or near parity on
-              six of nine steps and has the second-lowest before-field-one exit rate. The
-              loss is concentrated on two fields, not spread across the form.
-            </>,
-            <>
-              <strong>“Mobile is the problem.”</strong> Mobile out-completes desktop by 14
-              points. If anything, mobile is the accidental success story here.
-            </>,
-            <>
-              <strong>The final stretch.</strong> Bank details (10.0%) and terms + submit
-              (6.0%) are the two steps people most often assume are scary. Both are
-              unremarkable. By the time someone reaches field 8 they are committed.
-            </>,
-          ]}
-        />
-      </Section>
-
-      {/* ---------------- directions ---------------- */}
-      <Section
-        rail="Points to"
-        title="Where this sends the redesign"
-        dek="Three directions fall out of the diagnosis. They are hypotheses to be built and tested in parts 03 and 04, not conclusions — but each one traces to a specific number above."
-      >
-        <View gap={3}>
-          {[
-            {
-              n: 'Direction A',
-              title: 'Save every step, and make resuming the default',
-              body: "Persist progress field by field and let a merchant leave and return without loss. This is the highest-leverage change in the document, because it doesn't need to prevent a single abandonment to pay off — it only needs to stop abandonment from being permanent.",
-              evidence: `73.3% of first-time abandoners never return (337 of 460) · 581 of 704 users started exactly once · 45% of the few who did return got no further than before`,
-            },
-            {
-              n: 'Direction B',
-              title: 'Section the flow, and say up front what people need ready',
-              body: "Break the eight fields into named steps, and open with a short “what you'll need” screen that names the ID document and the bank details before anyone starts typing. The ID request should never be the first time a merchant hears about it, seven fields deep. Sectioning also lets the ID step carry its own explanation of why a person's identity is required to register a business.",
-              evidence: '32.6% drop at ID upload, 2.4× the next worst step · 97% of those abandons follow real effort, not instant refusal · 34% spend 5+ minutes before giving up · desktop 41.5% vs mobile 18.4%',
-            },
-            {
-              n: 'Direction C',
-              title: 'Explain every field in place — market-specific labels, formats, examples',
-              body: 'Give the two number fields real names drawn from each market’s registry vocabulary, plus input descriptions, format hints, worked examples and an inline explanation of where to find each number. Placeholders and help text are cheap; the confusion they would resolve is currently the second-largest source of permanent loss.',
-              evidence: 'Vesland Tax ID 11.5% and Registration number 21.3% vs ~5-8% elsewhere · Vesland private limited loses 35.0% on the two number fields vs 8.8% Korria / 9.5% Aldany · Registration number is 19.3% of all permanent losses',
-            },
-          ].map((dir) => (
-            <Card key={dir.n} padding={4}>
-              <View gap={2}>
-                <Text variant="caption-2" color="primary" monospace weight="medium">
-                  {dir.n}
-                </Text>
-                <Text variant="body-1" weight="semibold">
-                  {dir.title}
-                </Text>
-                <Text variant="body-2" className="prose-measure">
-                  {dir.body}
-                </Text>
-                <Text variant="caption-1" color="neutral-faded" monospace>
-                  Evidence · {dir.evidence}
-                </Text>
-              </View>
-            </Card>
-          ))}
-        </View>
-        <Note heading="Sequencing note">
-          <P>
-            B and C reduce how often merchants hit a wall. A changes what happens when they
-            do. If only one shipped, A is the one — it is the only change that recovers
-            people who have already failed.
-          </P>
-        </Note>
-      </Section>
-
-      {/* ---------------- confidence ---------------- */}
-      <Section rail="Confidence" title="What I'm assuming, and what I don't trust">
-        <H3>Held with confidence</H3>
-        <P>
-          The ID upload finding (n=519 reaching, 169 dying), the Vesland number-field
-          finding (survives a company-type control at roughly 4× the other markets), and the
-          non-return finding (337 of 460) all rest on large cells and hold up under slicing.
-        </P>
-
-        <H3>Held loosely — cells too small</H3>
-        <Bullets
-          items={[
-            <>
-              Third attempts: 20 sessions total. The 53.8% ID-upload drop rate in that group
-              rests on 13 sessions. Not usable.
-            </>,
-            <>
-              Partnership at ID upload: 66 sessions reaching the step. Directionally in line
-              with private limited; I wouldn't quote the exact number.
-            </>,
-            <>
-              Per-market medians on individual steps often rest on 4-14 abandons (Aldany
-              registration number n=13; Korria registered address n=14). I've used market
-              comparisons only where the cell is large.
-            </>,
-            <>
-              Company type (1.9%) and registered address (5.0%) show large Vesland-vs-best{' '}
-              <em>ratios</em> off tiny absolute differences. Ratios on small numbers are
-              noise; I've ignored them.
-            </>,
-          ]}
-        />
-
-        <H3>Assumptions the data forced on me</H3>
-        <Bullets
-          items={[
-            <>
-              <strong>I reconstructed the funnel</strong> from last_field_completed plus the
-              stated field order, on the brief's rule that abandoning at a field means
-              everything before it was completed. The chain reconciles exactly to 296
-              completions, so the reconstruction is sound.
-            </>,
-            <>
-              <strong>I treat “never started again” as churn.</strong> Within a 14-day window
-              that's an inference — someone may have returned on day 15, or completed via
-              support or a sales rep off-platform. The dataset can't see either.
-            </>,
-            <>
-              <strong>I can't see why anyone left.</strong> seconds_on_last_field tells me how
-              long someone struggled, not what they were struggling with. “Couldn't find the
-              document”, “upload failed silently” and “file was rejected for format” are
-              invisible here, and those three call for different fixes.
-            </>,
-            <>
-              <strong>Nothing distinguishes a real market difference from a content
-              difference.</strong> There is no language, locale or field-label column, so the
-              Vesland conclusion is inferred from the shape of the loss rather than measured
-              directly.
-            </>,
-          ]}
-        />
-
-        <Note heading="Leading into part 02">
-          <P>
-            The single most valuable missing measurement — the one that would most change
-            what I build — is developed in the next section.
-          </P>
-        </Note>
       </Section>
     </View>
   )
