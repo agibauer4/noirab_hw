@@ -200,7 +200,7 @@ export const PARTS = [
   { n: '01', title: 'Diagnose', status: 'on this page', active: true },
   { n: '02', title: 'Name the gap', status: 'on this page', active: true },
   { n: '03', title: 'Redesign', status: 'on this page', active: true },
-  { n: '04', title: 'Justify', status: 'to come' },
+  { n: '04', title: 'Justify', status: 'on this page', active: true },
 ]
 
 // --- Part 03 ---------------------------------------------------------------
@@ -295,3 +295,54 @@ export const DEVICE_CONTROL = [
   { market: 'Korria', desktop: 10.2, mobile: 5.1 },
   { market: 'Aldany', desktop: 8.7, mobile: 6.6 },
 ]
+
+// --- Part 04 ---------------------------------------------------------------
+
+// Conditional drop by device, at every step. The ID upload is the only place
+// the two devices come apart: +23.1pp, against a band of at most 5pp on the
+// other eight steps. That band is what makes the gap readable as a threshold —
+// and being a comparison WITHIN one cohort, it survives the redesign changing
+// who reaches the step at all.
+export const DEVICE_BY_STEP = [
+  { step: 1, field: 'Business name', desktop: 6.6, mobile: 4.1, gap: '+2.5' },
+  { step: 2, field: 'Company type', desktop: 2.2, mobile: 1.3, gap: '+0.9' },
+  { step: 3, field: 'Tax ID', desktop: 7.4, mobile: 9.0, gap: '-1.6' },
+  { step: 4, field: 'Registration number', desktop: 13.4, mobile: 13.9, gap: '-0.5' },
+  { step: 5, field: 'Registered address', desktop: 5.7, mobile: 3.8, gap: '+1.8' },
+  { step: 6, field: 'UBO name', desktop: 13.1, mobile: 11.1, gap: '+2.1' },
+  {
+    step: 7,
+    field: 'ID document upload',
+    desktop: 41.5,
+    mobile: 18.4,
+    gap: '+23.1',
+    worst: true,
+    hot: true,
+  },
+  { step: 8, field: 'Bank details', desktop: 12.4, mobile: 7.3, gap: '+5.0' },
+  { step: 9, field: 'Terms + submit', desktop: 3.7, mobile: 8.6, gap: '-4.9' },
+]
+
+export const DEVICE_BAND = '5.0pp'
+
+// What this traffic can actually settle. 847 sessions over 14 days is 60.5 a
+// day; split two ways, at 80% power and 5% two-sided, against a 34.9% baseline.
+// The point of the table is the last column: small effects are not measurable
+// here in any window worth waiting for.
+export const AB_POWER = [
+  { lift: '+3pp', perArm: '4,037', total: '8,074', days: 134 },
+  { lift: '+5pp', perArm: '1,467', total: '2,934', days: 49 },
+  { lift: '+8pp', perArm: '580', total: '1,160', days: 19, hot: true },
+  { lift: '+10pp', perArm: '373', total: '746', days: 12 },
+]
+
+// What abandoning costs today, per user rather than per session. The redesign's
+// whole defence of an early ID step rests on making these numbers recoverable.
+export const RECOVERY = {
+  firstAbandoned: 460,
+  everCompleted: 52,
+  everCompletedRate: '11.3%',
+  idFirstAbandoned: 133,
+  idEverCompleted: 21,
+  idEverCompletedRate: '15.8%',
+}
